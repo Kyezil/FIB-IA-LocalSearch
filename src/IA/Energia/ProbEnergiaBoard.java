@@ -8,10 +8,9 @@ import IA.Energia.Clientes;
 public class ProbEnergiaBoard {
 
     // List of customers
-    private Clientes customers;
-
+    static private Clientes customers;
     // List of power stations
-    private Centrales stations;
+    static private Centrales stations;
 
     // Relation customer~plant
     // customer2plant[i] = j  =>  j /= -1, customer i is connected to station j

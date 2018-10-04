@@ -1,7 +1,7 @@
 package IA.Energia;
 
 // Generates a ProbEnergiaBoard from a configuration
-class ProbEnergiaBoardBuilder {
+class ProbEnergiaBoardGenerator {
     protected ProbEnergiaBoard problem;
 
     public ProbEnergiaBoard getProblem() { return problem; }
