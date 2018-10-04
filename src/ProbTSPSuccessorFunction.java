@@ -13,14 +13,13 @@ import java.util.List;
 
 /**
  * @author Ravi Mohan
- *
  */
 public class ProbTSPSuccessorFunction implements SuccessorFunction {
     @SuppressWarnings("unchecked")
     public List getSuccessors(Object aState) {
-        ArrayList                retVal = new ArrayList();
-        ProbTSPBoard             board  = (ProbTSPBoard) aState;
-        ProbTSPHeuristicFunction TSPHF  = new ProbTSPHeuristicFunction();
+        ArrayList retVal = new ArrayList();
+        ProbTSPBoard board = (ProbTSPBoard) aState;
+        ProbTSPHeuristicFunction TSPHF = new ProbTSPHeuristicFunction();
 
         // No permitimos intercambiar la primera ciudad
         for (int i = 0; i < board.getNCities(); i++) {
@@ -29,7 +28,7 @@ public class ProbTSPSuccessorFunction implements SuccessorFunction {
 
                 newBoard.swapCities(i, j);
 
-                double    v = TSPHF.getHeuristicValue(newBoard);
+                double v = TSPHF.getHeuristicValue(newBoard);
                 String S = ProbTSPBoard.INTERCAMBIO + " " + i + " " + j + " Coste(" + v + ") ---> " + newBoard.toString();
 
                 retVal.add(new Successor(S, newBoard));

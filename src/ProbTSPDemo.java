@@ -1,4 +1,3 @@
-
 package IA.probTSP;
 
 import java.util.Iterator;
@@ -13,20 +12,20 @@ import aima.search.informed.SimulatedAnnealingSearch;
 
 
 public class ProbTSPDemo {
-    
-    public static void main(String[] args){
-        ProbTSPBoard TSPB=new ProbTSPBoard(30);
+
+    public static void main(String[] args) {
+        ProbTSPBoard TSPB = new ProbTSPBoard(30);
         TSPHillClimbingSearch(TSPB);
         TSPSimulatedAnnealingSearch(TSPB);
     }
-    
+
     private static void TSPHillClimbingSearch(ProbTSPBoard TSPB) {
         System.out.println("\nTSP HillClimbing  -->");
         try {
-            Problem problem =  new Problem(TSPB,new ProbTSPSuccessorFunction(), new ProbTSPGoalTest(),new ProbTSPHeuristicFunction());
-            Search search =  new HillClimbingSearch();
-            SearchAgent agent = new SearchAgent(problem,search);
-            
+            Problem problem = new Problem(TSPB, new ProbTSPSuccessorFunction(), new ProbTSPGoalTest(), new ProbTSPHeuristicFunction());
+            Search search = new HillClimbingSearch();
+            SearchAgent agent = new SearchAgent(problem, search);
+
             System.out.println();
             printActions(agent.getActions());
             printInstrumentation(agent.getInstrumentation());
@@ -34,15 +33,15 @@ public class ProbTSPDemo {
             e.printStackTrace();
         }
     }
-    
+
     private static void TSPSimulatedAnnealingSearch(ProbTSPBoard TSPB) {
         System.out.println("\nTSP Simulated Annealing  -->");
         try {
-            Problem problem =  new Problem(TSPB,new ProbTSPSuccessorFunctionSA(), new ProbTSPGoalTest(),new ProbTSPHeuristicFunction());
-            SimulatedAnnealingSearch search =  new SimulatedAnnealingSearch(2000,100,5,0.001);
+            Problem problem = new Problem(TSPB, new ProbTSPSuccessorFunctionSA(), new ProbTSPGoalTest(), new ProbTSPHeuristicFunction());
+            SimulatedAnnealingSearch search = new SimulatedAnnealingSearch(2000, 100, 5, 0.001);
             //search.traceOn();
-            SearchAgent agent = new SearchAgent(problem,search);
-            
+            SearchAgent agent = new SearchAgent(problem, search);
+
             System.out.println();
             printActions(agent.getActions());
             printInstrumentation(agent.getInstrumentation());
@@ -50,7 +49,7 @@ public class ProbTSPDemo {
             e.printStackTrace();
         }
     }
-    
+
     private static void printInstrumentation(Properties properties) {
         Iterator keys = properties.keySet().iterator();
         while (keys.hasNext()) {
@@ -58,17 +57,17 @@ public class ProbTSPDemo {
             String property = properties.getProperty(key);
             System.out.println(key + " : " + property);
         }
-        
+
     }
-    
+
     private static void printActions(List actions) {
         for (int i = 0; i < actions.size(); i++) {
             String action = (String) actions.get(i);
             System.out.println(action);
         }
     }
-    
-    
+
+
 }
 
 
