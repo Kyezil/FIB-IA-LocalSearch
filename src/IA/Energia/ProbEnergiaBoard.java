@@ -57,7 +57,7 @@ public class ProbEnergiaBoard {
         stationRemainingProduction[s_id] -= consumerConsumptionInStation(c_id, s_id);
     }
     public boolean canDeallocateCustomer(int c_id){
-        return (isClientAllocated(c_id)) && !isGuaranteedCustomer(c_id);
+        return (isCustomerAllocated(c_id)) && !isGuaranteedCustomer(c_id);
     }
 
 
@@ -68,7 +68,7 @@ public class ProbEnergiaBoard {
     }
 
     public boolean canSwapCustomers(int c_id1, int c_id2){
-        if(!isClientAllocated(c_id1) || !isClientAllocated(c_id2)) return false;
+        if(!isCustomerAllocated(c_id1) || !isCustomerAllocated(c_id2)) return false;
         int s_id1 = customer2station[c_id1];
         int s_id2 = customer2station[c_id2];
         double current_consumption_c1 = consumerConsumptionInStation(c_id1, s_id1);
@@ -95,7 +95,7 @@ public class ProbEnergiaBoard {
     }
 
     public boolean canReallocateCustomer(int c_id, int s_id){
-        if(!isClientAllocated(c_id)) return false;
+        if(!isCustomerAllocated(c_id)) return false;
         double new_consumption = consumerConsumptionInStation(c_id, s_id);
         return stationRemainingProduction[s_id] - new_consumption >= 0;
     }
@@ -111,7 +111,7 @@ public class ProbEnergiaBoard {
 
     // UTILITIES
 
-    public boolean isClientAllocated(int c_id){
+    public boolean isCustomerAllocated(int c_id){
         return customer2station[c_id] != UNALLOCATED;
     }
 
