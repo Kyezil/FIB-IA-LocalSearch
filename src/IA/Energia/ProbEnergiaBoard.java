@@ -56,17 +56,65 @@ public class ProbEnergiaBoard {
         customer2station[c_id] = s_id;
         stationRemainingProduction[s_id] -= consumerConsumptionInStation(c_id, s_id);
     }
-
-    public void deallocateCustomer(int c_id) {
-        int s_id = customer2station[c_id];
-        if (s_id != UNALLOCATED) {
-            stationRemainingProduction[s_id] += consumerConsumptionInStation(c_id, s_id);
-            customer2station[c_id] = UNALLOCATED;
-        }
+    public boolean canDeallocateCustomer(int c_id){
+        return (isClientAllocated(c_id)) && !isGuaranteedCustomer(c_id);
     }
 
 
+    public void deallocateCustomer(int c_id) {
+        int s_id = customer2station[c_id];
+        stationRemainingProduction[s_id] += consumerConsumptionInStation(c_id, s_id);
+        customer2station[c_id] = UNALLOCATED;
+    }
+
+    public boolean canSwapCustomers(int c_id1, int c_id2){
+        if(!isClientAllocated(c_id1) || !isClientAllocated(c_id2)) return false;
+        int s_id1 = customer2station[c_id1];
+        int s_id2 = customer2station[c_id2];
+        double current_consumption_c1 = consumerConsumptionInStation(c_id1, s_id1);
+        double current_consumption_c2 = consumerConsumptionInStation(c_id2, s_id2);
+        double new_consumption_c1 = consumerConsumptionInStation(c_id1, s_id2);
+        double new_consumption_c2 = consumerConsumptionInStation(c_id2, s_id1);
+        double newRemaining_s1 = stationRemainingProduction[s_id1] + current_consumption_c1 - new_consumption_c2;
+        double newRemaining_s2 = stationRemainingProduction[s_id2] + current_consumption_c2 - new_consumption_c1;
+        return newRemaining_s1 >= 0 && newRemaining_s2 >= 0;
+
+    }
+
+    public void swapCustomers(int c_id1, int c_id2){
+        int s_id1 = customer2station[c_id1];
+        int s_id2 = customer2station[c_id2];
+        double current_consumption_c1 = consumerConsumptionInStation(c_id1, s_id1);
+        double current_consumption_c2 = consumerConsumptionInStation(c_id2, s_id2);
+        double new_consumption_c1 = consumerConsumptionInStation(c_id1, s_id2);
+        double new_consumption_c2 = consumerConsumptionInStation(c_id2, s_id1);
+        stationRemainingProduction[s_id1] = stationRemainingProduction[s_id1] + current_consumption_c1 - new_consumption_c2;
+        stationRemainingProduction[s_id2] = stationRemainingProduction[s_id2] + current_consumption_c2 - new_consumption_c1;
+        customer2station[c_id1] = s_id2;
+        customer2station[c_id2] = s_id1;
+    }
+
+    public boolean canReallocateCustomer(int c_id, int s_id){
+        if(!isClientAllocated(c_id)) return false;
+        double new_consumption = consumerConsumptionInStation(c_id, s_id);
+        return stationRemainingProduction[s_id] - new_consumption >= 0;
+    }
+
+    public void reallocateCustomer(int c_id, int s_id){
+        int current_s_id = customer2station[c_id];
+        double current_consumption = consumerConsumptionInStation(c_id, current_s_id);
+        double new_consumption = consumerConsumptionInStation(c_id, s_id);
+        stationRemainingProduction[current_s_id] += current_consumption;
+        stationRemainingProduction[s_id] -= new_consumption;
+        customer2station[c_id] = s_id;
+    }
+
     // UTILITIES
+
+    public boolean isClientAllocated(int c_id){
+        return customer2station[c_id] != UNALLOCATED;
+    }
+
     public boolean isGuaranteedCustomer(int c_id) {
         return customers.get(c_id).getContrato() == Cliente.GARANTIZADO;
     }
