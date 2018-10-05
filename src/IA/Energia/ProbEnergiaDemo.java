@@ -13,20 +13,20 @@ public class ProbEnergiaDemo {
     final static int RANDOM_SEED = 1234;
 
     public static void main(String[] args) {
-        // EXPERIMENTO 1
+        // EXPERIMENT 1
         ProbEnergiaBoardGenerator PEgen = new ProbEnergiaBoardGenerator();
         try {
             PEgen.setStations(new int[]{5, 10, 25}, RANDOM_SEED);
             PEgen.setCustomers(1000, new double[]{0.25, 0.3, 0.45}, 0.75, RANDOM_SEED);
-            // falta estrategia de solucion inicial
-            // PEgen.setInitialState();
+            PEgen.setInitialState("random");
         } catch(Exception e) {
             e.printStackTrace();
         }
         ProbEnergiaBoard problem = PEgen.getProblem();
-        EnergiaHillClimbingSearch(problem);
+        System.out.println(problem.toString());
+        // EnergiaHillClimbingSearch(problem);
     }
-
+/* TODO uncomment when Successor and Heuristic are implemented
     private static void EnergiaHillClimbingSearch(ProbEnergiaBoard board) {
         System.out.println("\nEnergia HillClimbing  -->");
         try {
@@ -44,7 +44,7 @@ public class ProbEnergiaDemo {
             e.printStackTrace();
         }
     }
-
+*/
     private static void printInstrumentation(Properties properties) {
         Iterator keys = properties.keySet().iterator();
         while (keys.hasNext()) {
