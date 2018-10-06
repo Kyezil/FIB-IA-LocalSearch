@@ -57,7 +57,7 @@ public class ProbEnergiaBoard {
         stationRemainingProduction[s_id] -= consumerConsumptionInStation(c_id, s_id);
     }
     public boolean canDeallocateCustomer(int c_id){
-        return (isCustomerAllocated(c_id)) && !isGuaranteedCustomer(c_id);
+        return isCustomerAllocated(c_id) && !isGuaranteedCustomer(c_id);
     }
 
 
@@ -88,8 +88,8 @@ public class ProbEnergiaBoard {
         double current_consumption_c2 = consumerConsumptionInStation(c_id2, s_id2);
         double new_consumption_c1 = consumerConsumptionInStation(c_id1, s_id2);
         double new_consumption_c2 = consumerConsumptionInStation(c_id2, s_id1);
-        stationRemainingProduction[s_id1] = stationRemainingProduction[s_id1] + current_consumption_c1 - new_consumption_c2;
-        stationRemainingProduction[s_id2] = stationRemainingProduction[s_id2] + current_consumption_c2 - new_consumption_c1;
+        stationRemainingProduction[s_id1] += current_consumption_c1 - new_consumption_c2;
+        stationRemainingProduction[s_id2] += current_consumption_c2 - new_consumption_c1;
         customer2station[c_id1] = s_id2;
         customer2station[c_id2] = s_id1;
     }
@@ -97,7 +97,7 @@ public class ProbEnergiaBoard {
     public boolean canReallocateCustomer(int c_id, int s_id){
         if(!isCustomerAllocated(c_id)) return false;
         double new_consumption = consumerConsumptionInStation(c_id, s_id);
-        return stationRemainingProduction[s_id] - new_consumption >= 0;
+        return stationRemainingProduction[s_id] - new_consumption >= 0; // si algo peta, check this
     }
 
     public void reallocateCustomer(int c_id, int s_id){
