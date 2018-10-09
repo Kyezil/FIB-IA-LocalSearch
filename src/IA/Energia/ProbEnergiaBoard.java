@@ -80,14 +80,14 @@ public class ProbEnergiaBoard {
 
     // OPERATORS
     public boolean canAssignCustomer2Station(int c_id, int s_id) {
-        return (customer2station[c_id] != s_id) // not already assigned
+        return (customer2station[c_id] == UNALLOCATED) // not already assigned
             && (stationRemainingProduction[s_id] >= consumerConsumptionInStation(c_id, s_id)); // has enough space
     }
 
-    public void assignCustomer2Station(int c_id, int s_id) {
-        // deallocate in old
-        deallocateCustomer(c_id);
+    public void assignCustomer2Station(int c_id, int s_id) throws Exception {
         // allocate in new
+        if(isStationEmpty(s_id)) hBenefit += getStationStopCost(s_id) - getStationRunCost(s_id);
+        hBenefit += getCustomerBenefit(c_id) + getCostumerPenalization(c_id);
         customer2station[c_id] = s_id;
         stationRemainingProduction[s_id] -= consumerConsumptionInStation(c_id, s_id);
     }
@@ -96,9 +96,11 @@ public class ProbEnergiaBoard {
     }
 
 
-    public void deallocateCustomer(int c_id) {
+    public void deallocateCustomer(int c_id) throws Exception {
         int s_id = customer2station[c_id];
         stationRemainingProduction[s_id] += consumerConsumptionInStation(c_id, s_id);
+        if(isStationEmpty(s_id)) hBenefit += getStationRunCost(s_id) - getStationStopCost(s_id);
+        hBenefit += - getCustomerBenefit(c_id) - getCostumerPenalization(c_id);
         customer2station[c_id] = UNALLOCATED;
     }
 
@@ -147,7 +149,6 @@ public class ProbEnergiaBoard {
         stationRemainingProduction[current_s_id] += current_consumption;
         if(isStationEmpty(current_s_id)) hBenefit += getStationRunCost(current_s_id) - getStationStopCost(current_s_id);
 
-
         customer2station[c_id] = s_id;
     }
 
@@ -177,6 +178,21 @@ public class ProbEnergiaBoard {
         double costeProduccionMW = VEnergia.getCosteProduccionMW(tipo);
         double costeMarcha = VEnergia.getCosteMarcha(tipo);
         return produccion*costeProduccionMW + costeMarcha;
+    }
+
+    public double getCostumerPenalization(int c_id) throws Exception {
+        Cliente client = getCustomer(c_id);
+        double consumo = client.getConsumo();
+        int tipo = client.getTipo();
+        return consumo * VEnergia.getTarifaClientePenalizacion(tipo);
+    }
+
+    public double getCustomerBenefit(int c_id) throws Exception {
+        Cliente client = getCustomer(c_id);
+        double consumo = client.getConsumo();
+        int tipo = client.getTipo();
+        if(isGuaranteedCustomer(c_id)) return consumo * VEnergia.getTarifaClienteGarantizada(tipo);
+        else return consumo * VEnergia.getTarifaClienteNoGarantizada(tipo);
     }
 
     public double getStationStopCost(int s_id) throws Exception {
