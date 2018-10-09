@@ -94,6 +94,8 @@ public class ProbEnergiaBoard {
         stationRemainingProduction[s_id2] += current_consumption_c2 - new_consumption_c1;
         customer2station[c_id1] = s_id2;
         customer2station[c_id2] = s_id1;
+
+        // Aqui es faria el calcul heuristic
     }
 
     public boolean canReallocateCustomer(int c_id, int s_id){
@@ -102,12 +104,18 @@ public class ProbEnergiaBoard {
         return stationRemainingProduction[s_id] - new_consumption >= 0; // si algo peta, check this
     }
 
-    public void reallocateCustomer(int c_id, int s_id){
+    public void reallocateCustomer(int c_id, int s_id) throws Exception {
         int current_s_id = customer2station[c_id];
         double current_consumption = consumerConsumptionInStation(c_id, current_s_id);
         double new_consumption = consumerConsumptionInStation(c_id, s_id);
-        stationRemainingProduction[current_s_id] += current_consumption;
+        // Mirem si movem a una central que era buida
+        if(isStationEmpty(s_id)) hBenefit += getStationStopCost(s_id) - getStationRunCost(s_id);
         stationRemainingProduction[s_id] -= new_consumption;
+        // Mirem si l'actual passa a ser buida
+        stationRemainingProduction[current_s_id] += current_consumption;
+        if(isStationEmpty(current_s_id)) hBenefit += getStationRunCost(current_s_id) - getStationStopCost(current_s_id);
+
+
         customer2station[c_id] = s_id;
     }
 
@@ -128,6 +136,21 @@ public class ProbEnergiaBoard {
     public double consumerConsumptionInStation(int c_id, int s_id) {
         double factor = 1.0 + VEnergia.getPerdida(distance(c_id, s_id));
         return customers.get(c_id).getConsumo() * factor;
+    }
+
+    public double getStationRunCost(int s_id) throws Exception {
+        Central central = getStation(s_id);
+        double produccion = central.getProduccion();
+        int tipo = central.getTipo();
+        double costeProduccionMW = VEnergia.getCosteProduccionMW(tipo);
+        double costeMarcha = VEnergia.getCosteMarcha(tipo);
+        return produccion*costeProduccionMW + costeMarcha;
+    }
+
+    public double getStationStopCost(int s_id) throws Exception {
+        Central central = getStation(s_id);
+        int tipo = central.getTipo();
+        return VEnergia.getCosteParada(tipo);
     }
 
     // distance between customer c_id and station s_id
