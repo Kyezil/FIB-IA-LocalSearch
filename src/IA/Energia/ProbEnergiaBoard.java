@@ -198,6 +198,7 @@ public class ProbEnergiaBoard {
         return "ProbEnergiaBoard{" +
                 "\n\tcustomer2station=" + Arrays.toString(customer2station) +
                 "\n\tstationRemainingProduction=" + Arrays.toString(stationRemainingProduction) +
+                "\n\thBenefit=" + hBenefit +
                 '}';
     }
 }

@@ -6,7 +6,7 @@ import java.util.Random;
 class ProbEnergiaBoardGenerator {
     protected ProbEnergiaBoard problem;
 
-    public ProbEnergiaBoardGenerator() {
+    public ProbEnergiaBoardGenerator() throws Exception {
         this.problem = new ProbEnergiaBoard();
     }
 
@@ -28,7 +28,7 @@ class ProbEnergiaBoardGenerator {
         else throw new Exception("Initial state method " + method + " doesn't exists");
     }
 
-    private void randomInitState() {
+    private void randomInitState() throws Exception {
         // random greedy assignation
         Random rnd = new Random();
         int nc = problem.getNCustomers();

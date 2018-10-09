@@ -12,7 +12,7 @@ import java.util.Properties;
 public class ProbEnergiaDemo {
     final static int RANDOM_SEED = 1234;
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         // EXPERIMENT 1
         ProbEnergiaBoardGenerator PEgen = new ProbEnergiaBoardGenerator();
         try {
@@ -24,9 +24,9 @@ public class ProbEnergiaDemo {
         }
         ProbEnergiaBoard problem = PEgen.getProblem();
         System.out.println(problem.toString());
-        // EnergiaHillClimbingSearch(problem);
+    //    EnergiaHillClimbingSearch(problem);
     }
-/* TODO uncomment when Successor and Heuristic are implemented
+
     private static void EnergiaHillClimbingSearch(ProbEnergiaBoard board) {
         System.out.println("\nEnergia HillClimbing  -->");
         try {
@@ -44,7 +44,6 @@ public class ProbEnergiaDemo {
             e.printStackTrace();
         }
     }
-*/
     private static void printInstrumentation(Properties properties) {
         Iterator keys = properties.keySet().iterator();
         while (keys.hasNext()) {
