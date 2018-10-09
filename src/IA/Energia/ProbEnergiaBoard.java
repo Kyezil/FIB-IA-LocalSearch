@@ -46,6 +46,34 @@ public class ProbEnergiaBoard {
         return customer2station[c_id];
     }
 
+    // HEURISTICS INITIALIZATION
+    public void initHeuristicValues() throws Exception {
+        initHBenefit();
+    }
+    private void initHBenefit() throws Exception {
+        double benefit = 0;
+
+        // negative station cost
+        for (int i = 0; i < getNStations(); ++i) {
+            int s_type = getStation(i).getTipo();
+            if (!isStationEmpty(i)) benefit -= getStationRunCost(i);
+            benefit -= getStationStopCost(i);
+        }
+        // client cost
+        for (int i = 0; i < getNCustomers(); ++i) {
+            int s_type = getCustomer(i).getTipo();
+            double prod = getCustomer(i).getConsumo();
+            if (isCustomerAllocated(i)) { // positive connected
+                double rate = isGuaranteedCustomer(i) ?
+                        VEnergia.getTarifaClienteGarantizada(s_type) : VEnergia.getTarifaClienteNoGarantizada(s_type);
+                benefit += rate * prod;
+            } else { // negative disconnected
+                benefit -= VEnergia.getTarifaClientePenalizacion(s_type)*prod;
+            }
+        }
+        hBenefit = benefit;
+    }
+
     // OPERATORS
     public boolean canAssignCustomer2Station(int c_id, int s_id) {
         return (customer2station[c_id] != s_id) // not already assigned
