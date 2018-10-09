@@ -16,6 +16,8 @@ public class ProbEnergiaBoard {
     private int[] customer2station;
     private static final int UNALLOCATED = -1;
     private double[] stationRemainingProduction;
+
+    // heuristics values
     private double hBenefit;
 
 
@@ -110,7 +112,6 @@ public class ProbEnergiaBoard {
     }
 
     // UTILITIES
-
     public boolean isCustomerAllocated(int c_id){
         return customer2station[c_id] != UNALLOCATED;
     }
@@ -118,6 +119,11 @@ public class ProbEnergiaBoard {
     public boolean isGuaranteedCustomer(int c_id) {
         return customers.get(c_id).getContrato() == Cliente.GARANTIZADO;
     }
+
+    public boolean isStationEmpty(int s_id) {
+        return true; // todo implement
+    }
+
     // returns the consumption (MW) needed for customer c_id in station s_id
     public double consumerConsumptionInStation(int c_id, int s_id) {
         double factor = 1.0 + VEnergia.getPerdida(distance(c_id, s_id));
