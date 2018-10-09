@@ -16,6 +16,7 @@ public class ProbEnergiaBoard {
     private int[] customer2station;
     private static final int UNALLOCATED = -1;
     private double[] stationRemainingProduction;
+    private double hBenefit;
 
 
     // SETTERS AND GETTERS
@@ -78,7 +79,6 @@ public class ProbEnergiaBoard {
         double newRemaining_s1 = stationRemainingProduction[s_id1] + current_consumption_c1 - new_consumption_c2;
         double newRemaining_s2 = stationRemainingProduction[s_id2] + current_consumption_c2 - new_consumption_c1;
         return newRemaining_s1 >= 0 && newRemaining_s2 >= 0;
-
     }
 
     public void swapCustomers(int c_id1, int c_id2){
