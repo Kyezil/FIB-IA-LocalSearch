@@ -121,7 +121,7 @@ public class ProbEnergiaBoard {
     }
 
     public boolean isStationEmpty(int s_id) {
-        return true; // todo implement
+        return stationRemainingProduction[s_id] == stations.get(s_id).getProduccion();
     }
 
     // returns the consumption (MW) needed for customer c_id in station s_id
