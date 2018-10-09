@@ -186,6 +186,10 @@ public class ProbEnergiaBoard {
         return VEnergia.getCosteParada(tipo);
     }
 
+    public double getStationRemainingProportion(int s_id) {
+        return stationRemainingProduction[s_id] / getStation(s_id).getProduccion();
+    }
+
     // distance between customer c_id and station s_id
     public double distance(int c_id, int s_id) {
         Cliente c = customers.get(c_id);

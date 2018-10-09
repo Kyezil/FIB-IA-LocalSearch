@@ -18,7 +18,7 @@ public class ProbEnergiaDemo {
         try {
             PEgen.setStations(new int[]{5, 10, 25}, RANDOM_SEED);
             PEgen.setCustomers(1000, new double[]{0.25, 0.3, 0.45}, 0.75, RANDOM_SEED);
-            PEgen.setInitialState("random");
+            PEgen.setInitialState("random", RANDOM_SEED);
         } catch(Exception e) {
             e.printStackTrace();
         }
@@ -33,7 +33,7 @@ public class ProbEnergiaDemo {
             Problem problem = new Problem(board,
                     new ProbEnergiaSuccessorFunction(),
                     new ProbEnergiaGoalTest(),
-                    new ProbEnergiaHeuristicBenefit());
+                    new ProbEnergiaHeuristicMix());
             Search search = new HillClimbingSearch();
             SearchAgent agent = new SearchAgent(problem, search);
 

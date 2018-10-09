@@ -16,6 +16,7 @@ public class ProbEnergiaSuccessorFunction implements SuccessorFunction {
         // 1. allocate user x station
         // 2. deallocate user
         // 3. reallocate user x station
+        // 4. swap
         try {
             for (int i = 0; i < board.getNCustomers(); ++i) {
                 if (board.canDeallocateCustomer(i)) {
@@ -35,6 +36,14 @@ public class ProbEnergiaSuccessorFunction implements SuccessorFunction {
                         ProbEnergiaBoard new_board = new ProbEnergiaBoard(board);
                         new_board.reallocateCustomer(i, j);
                         ret.add(new Successor("reallocate customer " + i + " to station " + j +
+                                "\n\t benefit = " + new_board.getBenefit() , new_board));
+                    }
+                }
+                for (int j = 0; j < board.getNCustomers(); ++j) {
+                    if (i != j && board.canSwapCustomers(i,j)) {
+                        ProbEnergiaBoard new_board = new ProbEnergiaBoard(board);
+                        new_board.swapCustomers(i, j);
+                        ret.add(new Successor("swap customer " + i + " and " + j +
                                 "\n\t benefit = " + new_board.getBenefit() , new_board));
                     }
                 }
