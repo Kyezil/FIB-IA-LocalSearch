@@ -26,7 +26,6 @@ class ProbEnergiaBoardGenerator {
         // add else if as needed
         if (method.equals("random")) randomInitState();
         else throw new Exception("Initial state method " + method + " doesn't exists");
-        problem.initHeuristicValues();
     }
 
     private void randomInitState() {
@@ -40,8 +39,8 @@ class ProbEnergiaBoardGenerator {
                 boolean isAssigned = false;
                 do { // be careful with infinite loop
                     int station = rnd.nextInt(ns);
-                    if (problem.canAssignCustomer2Station(i, station)) {
-                        problem.assignCustomer2Station(i, station);
+                    if (problem.canAllocateCustomer2Station(i, station)) {
+                        problem.allocateCustomer2Station(i, station);
                         isAssigned = true;
                     }
                 } while (!isAssigned);
