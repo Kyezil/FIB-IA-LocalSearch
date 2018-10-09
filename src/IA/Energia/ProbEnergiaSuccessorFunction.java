@@ -21,18 +21,21 @@ public class ProbEnergiaSuccessorFunction implements SuccessorFunction {
                 if (board.canDeallocateCustomer(i)) {
                     ProbEnergiaBoard new_board = new ProbEnergiaBoard(board);
                     new_board.deallocateCustomer(i);
-                    ret.add(new Successor("deallocate customer " + i, new_board));
+                    ret.add(new Successor("deallocate customer " + i +
+                            "\n\t benefit = " + new_board.getBenefit() , new_board));
                 }
                 for (int j = 0; j < board.getNStations(); ++j) {
                     if (board.canAllocateCustomer2Station(i, j)) {
                         ProbEnergiaBoard new_board = new ProbEnergiaBoard(board);
                         new_board.allocateCustomer2Station(i, j);
-                        ret.add(new Successor("allocate customer " + i + " to station " + j, new_board));
+                        ret.add(new Successor("allocate customer " + i + " to station " + j +
+                                "\n\t benefit = " + new_board.getBenefit() , new_board));
                     }
                     if (board.canReallocateCustomer(i,j)) {
                         ProbEnergiaBoard new_board = new ProbEnergiaBoard(board);
                         new_board.reallocateCustomer(i, j);
-                        ret.add(new Successor("reallocate customer " + i + " to station " + j, new_board));
+                        ret.add(new Successor("reallocate customer " + i + " to station " + j +
+                                "\n\t benefit = " + new_board.getBenefit() , new_board));
                     }
                 }
             }
