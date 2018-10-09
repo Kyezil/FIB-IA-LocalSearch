@@ -33,7 +33,7 @@ public class ProbEnergiaDemo {
             Problem problem = new Problem(board,
                     new ProbEnergiaSuccessorFunction(),
                     new ProbEnergiaGoalTest(),
-                    new ProbEnergiaHeuristicFunction());
+                    new ProbEnergiaHeuristicBenefit());
             Search search = new HillClimbingSearch();
             SearchAgent agent = new SearchAgent(problem, search);
 

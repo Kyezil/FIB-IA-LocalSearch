@@ -46,7 +46,11 @@ public class ProbEnergiaBoard {
         return customer2station[c_id];
     }
 
-    // HEURISTICS INITIALIZATION
+    public double getBenefit() {
+        return hBenefit;
+    }
+
+    // HEURISTICS INIT
     public void initHeuristicValues() throws Exception {
         initHBenefit();
     }

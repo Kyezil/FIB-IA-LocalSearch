@@ -24,9 +24,9 @@ class ProbEnergiaBoardGenerator {
     // implement heuristic
     public void setInitialState(String method) throws Exception {
         // add else if as needed
-        problem.initHeuristicValues();
         if (method.equals("random")) randomInitState();
         else throw new Exception("Initial state method " + method + " doesn't exists");
+        problem.initHeuristicValues();
     }
 
     private void randomInitState() {
