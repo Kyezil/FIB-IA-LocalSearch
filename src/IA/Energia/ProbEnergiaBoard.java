@@ -24,6 +24,12 @@ public class ProbEnergiaBoard {
         hBenefit = 0;
     }
 
+    public ProbEnergiaBoard(ProbEnergiaBoard board) {
+        this.customer2station = board.customer2station.clone();
+        this.stationRemainingProduction = board.stationRemainingProduction.clone();
+        this.hBenefit = board.hBenefit;
+    }
+
     // SETTERS AND GETTERS
     public void setCustomers(Clientes cs) throws Exception {
         customers = cs;
