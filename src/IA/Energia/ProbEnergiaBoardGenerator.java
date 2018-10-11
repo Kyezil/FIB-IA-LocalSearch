@@ -21,15 +21,16 @@ class ProbEnergiaBoardGenerator {
         Clientes cs = new Clientes(ns, proc, propg, seed);
         problem.setCustomers(cs);
     }
-    // implement heuristic
-    public void setInitialState(String method, int seed) throws Exception {
-        // add else if as needed
-        if (method.equals("random")) randomInitState(seed);
-        else throw new Exception("Initial state method " + method + " doesn't exists");
+
+    public void randomInitState(int seed) throws Exception {
+        // random greedy assignation
+        randomMaxCapacityInitState(seed, 1.0);
     }
 
-    private void randomInitState(int seed) throws Exception {
-        // random greedy assignation
+    public void randomMaxCapacityInitState(int seed, double max_c) throws Exception {
+        // random greedy assignation using at most max_c proportion of station capacity
+        // max_c between 0 and 1
+        // kinda stupid code, can be improved a lot
         Random rnd = new Random();
         rnd.setSeed(seed);
         int nc = problem.getNCustomers();
@@ -39,9 +40,9 @@ class ProbEnergiaBoardGenerator {
                 // assign randomly
                 boolean isAssigned = false;
                 do { // be careful with infinite loop
-                    int station = rnd.nextInt(ns);
-                    if (problem.canAllocateCustomer2Station(i, station)) {
-                        problem.allocateCustomer2Station(i, station);
+                    int s_id = rnd.nextInt(ns);
+                    if (problem.canAllocateCustomer2Station(i, s_id, max_c)) {
+                        problem.allocateCustomer2Station(i, s_id);
                         isAssigned = true;
                     }
                 } while (!isAssigned);

@@ -76,6 +76,14 @@ public class ProbEnergiaBoard {
             && (stationRemainingProduction[s_id] >= consumerConsumptionInStation(c_id, s_id)); // has enough space
     }
 
+    // can allocate so that the remaining production proportion is above max_prod_prop in [0,1]
+    public boolean canAllocateCustomer2Station(int c_id, int s_id, double max_prod_prop) {
+        if (customer2station[c_id] != UNALLOCATED) return false;
+        double prop_after_assign = (stationRemainingProduction[s_id] - consumerConsumptionInStation(c_id, s_id))
+                                    / getStation(s_id).getProduccion();
+        return prop_after_assign >= 1-max_prod_prop;
+    }
+
     public void allocateCustomer2Station(int c_id, int s_id) throws Exception {
         if(isStationEmpty(s_id)) hBenefit += getStationStopCost(s_id) - getStationRunCost(s_id);
         hEntropy -= getStationEntropy(s_id);
