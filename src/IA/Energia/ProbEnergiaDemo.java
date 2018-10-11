@@ -18,7 +18,8 @@ public class ProbEnergiaDemo {
         try {
             PEgen.setStations(new int[]{5, 10, 25}, RANDOM_SEED);
             PEgen.setCustomers(1000, new double[]{0.25, 0.3, 0.45}, 0.75, RANDOM_SEED);
-            PEgen.randomInitState(RANDOM_SEED);
+            PEgen.greedyMaxCapacityInitState(0.95);
+            //PEgen.randomInitState(RANDOM_SEED);
             //PEgen.randomMaxCapacityInitState(RANDOM_SEED, 1.0);
         } catch(Exception e) {
             e.printStackTrace();
