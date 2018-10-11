@@ -44,6 +44,7 @@ public class ProbEnergiaBoard {
             hBenefit -= getCustomerPenalization(i);
         }
     }
+
     public void setStations(Centrales ss) throws Exception {
         stations = ss;
         stationRemainingProduction = new double[ss.size()];
@@ -72,7 +73,7 @@ public class ProbEnergiaBoard {
 
     // OPERATORS
     public boolean canAllocateCustomer2Station(int c_id, int s_id) {
-        return (customer2station[c_id] == UNALLOCATED) // not already assigned
+        return !isCustomerAllocated(c_id) // not already assigned
             && (stationRemainingProduction[s_id] >= consumerConsumptionInStation(c_id, s_id)); // has enough space
     }
 
@@ -109,6 +110,7 @@ public class ProbEnergiaBoard {
     }
 
     public boolean canSwapCustomers(int c_id1, int c_id2){
+        if (c_id1 == c_id2) return false;
         if(!isCustomerAllocated(c_id1) || !isCustomerAllocated(c_id2)) return false;
         int s_id1 = customer2station[c_id1];
         int s_id2 = customer2station[c_id2];
