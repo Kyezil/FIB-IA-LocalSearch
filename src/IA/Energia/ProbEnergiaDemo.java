@@ -26,7 +26,11 @@ public class ProbEnergiaDemo {
         }
         ProbEnergiaBoard problem = PEgen.getProblem();
         System.out.println(problem.toString());
+        // timer
+        long time_0 = System.currentTimeMillis();
         EnergiaHillClimbingSearch(problem);
+        long dtime = System.currentTimeMillis() - time_0;
+        System.out.println("\nTime elapsed: " + dtime + " ms");
     }
 
     private static void EnergiaHillClimbingSearch(ProbEnergiaBoard board) {
@@ -39,9 +43,20 @@ public class ProbEnergiaDemo {
             Search search = new HillClimbingSearch();
             SearchAgent agent = new SearchAgent(problem, search);
 
-            System.out.println();
+
             printActions(agent.getActions());
             printInstrumentation(agent.getInstrumentation());
+
+            System.out.println("Final state =>");
+            ProbEnergiaBoard final_board = (ProbEnergiaBoard) search.getGoalState();
+            System.out.println(final_board);
+            // num of customers served
+            int customers_served = 0;
+            for (int i = 0; i < final_board.getNCustomers(); ++i) {
+                if (final_board.isCustomerAllocated(i)) customers_served += 1;
+            }
+            System.out.println("Number of customers served = " + customers_served);
+
         } catch (Exception e) {
             e.printStackTrace();
         }
