@@ -20,10 +20,12 @@ public class ProbEnergiaBoard {
     // heuristics values
     private double hBenefit;
     private double hEntropy;
+    private int hNGuaranteedCustomersAllocated;
 
     public ProbEnergiaBoard() throws Exception {
         hBenefit = 0;
         hEntropy = 0;
+        hNGuaranteedCustomersAllocated = 0;
     }
 
     public ProbEnergiaBoard(ProbEnergiaBoard board) {
@@ -86,11 +88,14 @@ public class ProbEnergiaBoard {
     }
 
     public void allocateCustomer2Station(int c_id, int s_id) throws Exception {
+        if (isGuaranteedCustomer(c_id)) hNGuaranteedCustomersAllocated += 1;
         if(isStationEmpty(s_id)) hBenefit += getStationStopCost(s_id) - getStationRunCost(s_id);
         hEntropy -= getStationEntropy(s_id);
         hBenefit += getCustomerBenefit(c_id) + getCustomerPenalization(c_id);
+
         customer2station[c_id] = s_id;
         stationRemainingProduction[s_id] -= consumerConsumptionInStation(c_id, s_id);
+
         hEntropy += getStationEntropy(s_id);
     }
 
@@ -98,14 +103,16 @@ public class ProbEnergiaBoard {
         return isCustomerAllocated(c_id) && !isGuaranteedCustomer(c_id);
     }
 
-
     public void deallocateCustomer(int c_id) throws Exception {
         int s_id = customer2station[c_id];
-        hEntropy -= getStationEntropy(s_id);
         stationRemainingProduction[s_id] += consumerConsumptionInStation(c_id, s_id);
+
+        if (isGuaranteedCustomer(c_id)) hNGuaranteedCustomersAllocated -= 1;
+        hEntropy -= getStationEntropy(s_id);
         if(isStationEmpty(s_id)) hBenefit += getStationRunCost(s_id) - getStationStopCost(s_id);
         hBenefit += - getCustomerBenefit(c_id) - getCustomerPenalization(c_id);
         hEntropy += getStationEntropy(s_id);
+
         customer2station[c_id] = UNALLOCATED;
     }
 
@@ -209,6 +216,10 @@ public class ProbEnergiaBoard {
         int tipo = client.getTipo();
         if(isGuaranteedCustomer(c_id)) return consumo * VEnergia.getTarifaClienteGarantizada(tipo);
         else return consumo * VEnergia.getTarifaClienteNoGarantizada(tipo);
+    }
+
+    public int getNGuaranteedCustomersAllocated() {
+        return hNGuaranteedCustomersAllocated;
     }
 
     public double getStationStopCost(int s_id) throws Exception {
