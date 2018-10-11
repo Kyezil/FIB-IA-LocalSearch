@@ -4,6 +4,7 @@ import aima.search.framework.Problem;
 import aima.search.framework.Search;
 import aima.search.framework.SearchAgent;
 import aima.search.informed.HillClimbingSearch;
+import aima.search.informed.SimulatedAnnealingSearch;
 
 import java.util.Iterator;
 import java.util.List;
@@ -28,7 +29,8 @@ public class ProbEnergiaDemo {
         System.out.println(problem.toString());
         // timer
         long time_0 = System.currentTimeMillis();
-        EnergiaHillClimbingSearch(problem);
+        // EnergiaHillClimbingSearch(problem);
+        EnergiaSimulatedAnnealingSearch(problem);
         long dtime = System.currentTimeMillis() - time_0;
         System.out.println("\nTime elapsed: " + dtime + " ms");
     }
@@ -49,18 +51,47 @@ public class ProbEnergiaDemo {
 
             System.out.println("Final state =>");
             ProbEnergiaBoard final_board = (ProbEnergiaBoard) search.getGoalState();
-            System.out.println(final_board);
-            // num of customers served
-            int customers_served = 0;
-            for (int i = 0; i < final_board.getNCustomers(); ++i) {
-                if (final_board.isCustomerAllocated(i)) customers_served += 1;
-            }
-            System.out.println("Number of customers served = " + customers_served);
+            displayFinalState(final_board);
 
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
+    private static void EnergiaSimulatedAnnealingSearch(ProbEnergiaBoard board) {
+        System.out.println("\nSimulated Annealing  -->");
+        try {
+            Problem problem = new Problem(board,
+                    new ProbEnergiaSuccessorFunctionSA(),
+                    new ProbEnergiaGoalTest(),
+                    new ProbEnergiaHeuristicBenefit());
+            SimulatedAnnealingSearch search = new SimulatedAnnealingSearch(800000, 200, 5, 0.001);
+            //search.traceOn();
+            SearchAgent agent = new SearchAgent(problem, search);
+
+            System.out.println();
+            //printActions(agent.getActions()); // not accessible for simulated annealing
+            printInstrumentation(agent.getInstrumentation());
+
+            System.out.println("Final state =>");
+            ProbEnergiaBoard final_board = (ProbEnergiaBoard) search.getGoalState();
+            displayFinalState(final_board);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void displayFinalState(ProbEnergiaBoard final_board) {
+        System.out.println(final_board);
+        // num of customers served
+        int customers_served = 0;
+        for (int i = 0; i < final_board.getNCustomers(); ++i) {
+            if (final_board.isCustomerAllocated(i)) customers_served += 1;
+        }
+        System.out.println("Number of customers served = " + customers_served);
+    }
+
     private static void printInstrumentation(Properties properties) {
         Iterator keys = properties.keySet().iterator();
         while (keys.hasNext()) {
