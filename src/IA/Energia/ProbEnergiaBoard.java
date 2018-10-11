@@ -19,15 +19,18 @@ public class ProbEnergiaBoard {
 
     // heuristics values
     private double hBenefit;
+    private double hEntropy;
 
     public ProbEnergiaBoard() throws Exception {
         hBenefit = 0;
+        hEntropy = 0;
     }
 
     public ProbEnergiaBoard(ProbEnergiaBoard board) {
         this.customer2station = board.customer2station.clone();
         this.stationRemainingProduction = board.stationRemainingProduction.clone();
         this.hBenefit = board.hBenefit;
+        this.hEntropy = board.hEntropy;
     }
 
     // SETTERS AND GETTERS
@@ -63,6 +66,10 @@ public class ProbEnergiaBoard {
         return hBenefit;
     }
 
+    public double getEntropy(){
+        return hEntropy;
+    }
+
     // OPERATORS
     public boolean canAllocateCustomer2Station(int c_id, int s_id) {
         return (customer2station[c_id] == UNALLOCATED) // not already assigned
@@ -71,9 +78,11 @@ public class ProbEnergiaBoard {
 
     public void allocateCustomer2Station(int c_id, int s_id) throws Exception {
         if(isStationEmpty(s_id)) hBenefit += getStationStopCost(s_id) - getStationRunCost(s_id);
+        hEntropy -= getStationEntropy(s_id);
         hBenefit += getCustomerBenefit(c_id) + getCustomerPenalization(c_id);
         customer2station[c_id] = s_id;
         stationRemainingProduction[s_id] -= consumerConsumptionInStation(c_id, s_id);
+        hEntropy += getStationEntropy(s_id);
     }
 
     public boolean canDeallocateCustomer(int c_id){
@@ -83,9 +92,11 @@ public class ProbEnergiaBoard {
 
     public void deallocateCustomer(int c_id) throws Exception {
         int s_id = customer2station[c_id];
+        hEntropy -= getStationEntropy(s_id);
         stationRemainingProduction[s_id] += consumerConsumptionInStation(c_id, s_id);
         if(isStationEmpty(s_id)) hBenefit += getStationRunCost(s_id) - getStationStopCost(s_id);
         hBenefit += - getCustomerBenefit(c_id) - getCustomerPenalization(c_id);
+        hEntropy += getStationEntropy(s_id);
         customer2station[c_id] = UNALLOCATED;
     }
 
@@ -105,6 +116,8 @@ public class ProbEnergiaBoard {
     public void swapCustomers(int c_id1, int c_id2){
         int s_id1 = customer2station[c_id1];
         int s_id2 = customer2station[c_id2];
+        hEntropy -= getStationEntropy(s_id1);
+        hEntropy -= getStationEntropy(s_id2);
         double current_consumption_c1 = consumerConsumptionInStation(c_id1, s_id1);
         double current_consumption_c2 = consumerConsumptionInStation(c_id2, s_id2);
         double new_consumption_c1 = consumerConsumptionInStation(c_id1, s_id2);
@@ -113,7 +126,8 @@ public class ProbEnergiaBoard {
         stationRemainingProduction[s_id2] += current_consumption_c2 - new_consumption_c1;
         customer2station[c_id1] = s_id2;
         customer2station[c_id2] = s_id1;
-
+        hEntropy += getStationEntropy(s_id1);
+        hEntropy += getStationEntropy(s_id2);
         // Aqui es faria el calcul heuristic
     }
 
@@ -125,6 +139,8 @@ public class ProbEnergiaBoard {
 
     public void reallocateCustomer(int c_id, int s_id) throws Exception {
         int current_s_id = customer2station[c_id];
+        hEntropy -= getStationEntropy(s_id);
+        hEntropy -= getStationEntropy(current_s_id);
         double current_consumption = consumerConsumptionInStation(c_id, current_s_id);
         double new_consumption = consumerConsumptionInStation(c_id, s_id);
         // Mirem si movem a una central que era buida
@@ -133,11 +149,16 @@ public class ProbEnergiaBoard {
         // Mirem si l'actual passa a ser buida
         stationRemainingProduction[current_s_id] += current_consumption;
         if(isStationEmpty(current_s_id)) hBenefit += getStationRunCost(current_s_id) - getStationStopCost(current_s_id);
-
         customer2station[c_id] = s_id;
+        hEntropy += getStationEntropy(s_id);
+        hEntropy += getStationEntropy(current_s_id);
     }
 
     // UTILITIES
+    public double getStationEntropy(int s_id){
+        return - getStationRemainingProportion(s_id) * Math.log(getStationRemainingProportion(s_id));
+    }
+
     public boolean isCustomerAllocated(int c_id){
         return customer2station[c_id] != UNALLOCATED;
     }
