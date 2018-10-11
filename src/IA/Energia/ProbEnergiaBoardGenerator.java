@@ -49,4 +49,26 @@ class ProbEnergiaBoardGenerator {
             }
         }
     }
+
+    public void greedyInitState() throws Exception {
+        greedyMaxCapacityInitState(1.0);
+    }
+
+    public void greedyMaxCapacityInitState(double max_c) throws Exception {
+        int nc = problem.getNCustomers();
+        int ns = problem.getNStations();
+        int current_central = 0;
+        for(int i=0; i < nc; ++i){
+            if(problem.isGuaranteedCustomer(i)){
+                boolean isAssigned = false;
+                do {
+                    if(problem.canAllocateCustomer2Station(i, current_central, max_c)){
+                        problem.allocateCustomer2Station(i, current_central);
+                        isAssigned = true;
+                    }
+                    else current_central = (current_central + 1) % ns;
+                } while (!isAssigned);
+            }
+        }
+    }
 }
