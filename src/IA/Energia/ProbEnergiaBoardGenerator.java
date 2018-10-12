@@ -71,4 +71,55 @@ class ProbEnergiaBoardGenerator {
             }
         }
     }
+
+
+    public void unguaranteedRandomInitState(int seed, double prob) throws Exception { //prob representa la probabilitat d'assignar un customer
+        unguaranteedRandomMaxCapacityInitState(seed, prob, 1.0);
+    }
+
+    public void unguaranteedRandomMaxCapacityInitState(int seed, double prob, double max_c) throws Exception {
+        // random greedy assignation using at most max_c proportion of station capacity
+        // max_c between 0 and 1
+        // kinda stupid code, can be improved a lot
+        Random rnd = new Random();
+        rnd.setSeed(seed);
+        int nc = problem.getNCustomers();
+        int ns = problem.getNStations();
+        for (int i = 0; i < nc; ++i) {
+            if (rnd.nextDouble() <= prob) { //assumeixo que en puc treure aqui doubles i mes endavant ints, sino peta
+                // assign randomly
+                boolean isAssigned = false;
+                do { // be careful with infinite loop
+                    int s_id = rnd.nextInt(ns);
+                    if (problem.canAllocateCustomer2Station(i, s_id, max_c)) {
+                        problem.allocateCustomer2Station(i, s_id);
+                        isAssigned = true;
+                    }
+                } while (!isAssigned);
+            }
+        }
+    }
+
+    public void unguaranteedGreedyInitState(int seed, double prob) throws Exception {
+        unguaranteedGreedyMaxCapacityInitState(seed, prob, 1.0);
+    }
+
+    public void unguaranteedGreedyMaxCapacityInitState(int seed, double prob, double max_c) throws Exception {
+        Random rnd = new Random();
+        int nc = problem.getNCustomers();
+        int ns = problem.getNStations();
+        int current_central = 0;
+        for(int i=0; i < nc; ++i){
+            if(rnd.nextDouble() <= prob){
+                boolean isAssigned = false;
+                do {
+                    if(problem.canAllocateCustomer2Station(i, current_central, max_c)){
+                        problem.allocateCustomer2Station(i, current_central);
+                        isAssigned = true;
+                    }
+                    else current_central = (current_central + 1) % ns;
+                } while (!isAssigned);
+            }
+        }
+    }
 }
