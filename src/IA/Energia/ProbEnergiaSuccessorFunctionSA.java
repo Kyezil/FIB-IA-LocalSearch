@@ -36,7 +36,7 @@ public class ProbEnergiaSuccessorFunctionSA implements SuccessorFunction {
                 double r = myRandom.nextDouble();
                 if (r < p_deallocate) {
                     int i = myRandom.nextInt(n);
-                    if (board.canDeallocateCustomer(i)) {
+                    if (board.canDeallocateCustomer(i) && !board.isGuaranteedCustomer(i)) {
                         ProbEnergiaBoard new_board = new ProbEnergiaBoard(board);
                         new_board.deallocateCustomer(i);
                         ret.add(new Successor("", new_board));

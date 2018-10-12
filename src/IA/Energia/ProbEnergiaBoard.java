@@ -100,7 +100,7 @@ public class ProbEnergiaBoard {
     }
 
     public boolean canDeallocateCustomer(int c_id){
-        return isCustomerAllocated(c_id) && !isGuaranteedCustomer(c_id);
+        return isCustomerAllocated(c_id);
     }
 
     public void deallocateCustomer(int c_id) throws Exception {
@@ -169,6 +169,18 @@ public class ProbEnergiaBoard {
         customer2station[c_id] = s_id;
         hEntropy += getStationEntropy(s_id);
         hEntropy += getStationEntropy(current_s_id);
+    }
+
+    public boolean canProfOperator(int c_id1, int c_id2){
+        if(isCustomerAllocated(c_id1) || !isCustomerAllocated(c_id2)) return false;
+        int s_id = customer2station[c_id2];
+        return stationRemainingProduction[s_id] + consumerConsumptionInStation(c_id2, s_id) - consumerConsumptionInStation(c_id1, s_id) >= 0;
+    }
+
+    public void profOperator(int c_id1, int c_id2) throws Exception { //col·loca el c_id1, que no estava allocated, a la central del c_id2, i desallocata el c_id2
+        int s_id = customer2station[c_id2];
+        deallocateCustomer(c_id2);
+        allocateCustomer2Station(c_id1, s_id);
     }
 
     // UTILITIES
