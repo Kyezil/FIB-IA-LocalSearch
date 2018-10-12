@@ -21,11 +21,13 @@ public class ProbEnergiaBoard {
     private double hBenefit;
     private double hEntropy;
     private int hNGuaranteedCustomersAllocated;
+    private double hLostEnergy;
 
     public ProbEnergiaBoard() throws Exception {
         hBenefit = 0;
         hEntropy = 0;
         hNGuaranteedCustomersAllocated = 0;
+        hBenefit = 0.0;
     }
 
     public ProbEnergiaBoard(ProbEnergiaBoard board) {
@@ -33,6 +35,7 @@ public class ProbEnergiaBoard {
         this.stationRemainingProduction = board.stationRemainingProduction.clone();
         this.hBenefit = board.hBenefit;
         this.hEntropy = board.hEntropy;
+        this.hLostEnergy = board.hLostEnergy;
     }
 
     // SETTERS AND GETTERS
@@ -89,9 +92,13 @@ public class ProbEnergiaBoard {
 
     public void allocateCustomer2Station(int c_id, int s_id) throws Exception {
         if (isGuaranteedCustomer(c_id)) hNGuaranteedCustomersAllocated += 1;
-        if(isStationEmpty(s_id)) hBenefit += getStationStopCost(s_id) - getStationRunCost(s_id);
+        if(isStationEmpty(s_id)) {
+            hBenefit += getStationStopCost(s_id) - getStationRunCost(s_id);
+            hLostEnergy += getStationProduction(s_id);
+        }
         hEntropy -= getStationEntropy(s_id);
         hBenefit += getCustomerBenefit(c_id) + getCustomerPenalization(c_id);
+        hLostEnergy -= getCustomerConsumption(c_id);
 
         customer2station[c_id] = s_id;
         stationRemainingProduction[s_id] -= consumerConsumptionInStation(c_id, s_id);
@@ -106,10 +113,13 @@ public class ProbEnergiaBoard {
     public void deallocateCustomer(int c_id) throws Exception {
         int s_id = customer2station[c_id];
         stationRemainingProduction[s_id] += consumerConsumptionInStation(c_id, s_id);
-
+        hLostEnergy += getCustomerConsumption(c_id);
         if (isGuaranteedCustomer(c_id)) hNGuaranteedCustomersAllocated -= 1;
         hEntropy -= getStationEntropy(s_id);
-        if(isStationEmpty(s_id)) hBenefit += getStationRunCost(s_id) - getStationStopCost(s_id);
+        if(isStationEmpty(s_id)) {
+            hBenefit += getStationRunCost(s_id) - getStationStopCost(s_id);
+            hLostEnergy -= getStationProduction(s_id);
+        }
         hBenefit += - getCustomerBenefit(c_id) - getCustomerPenalization(c_id);
         hEntropy += getStationEntropy(s_id);
 
@@ -205,6 +215,10 @@ public class ProbEnergiaBoard {
         return stationRemainingProduction[s_id] == stations.get(s_id).getProduccion();
     }
 
+    public double getStationProduction(int s_id){
+        return stations.get(s_id).getProduccion();
+    }
+
     // returns the consumption (MW) needed for customer c_id in station s_id
     public double consumerConsumptionInStation(int c_id, int s_id) {
         double factor = 1.0 + VEnergia.getPerdida(distance(c_id, s_id));
@@ -227,6 +241,11 @@ public class ProbEnergiaBoard {
         return consumo * VEnergia.getTarifaClientePenalizacion(tipo);
     }
 
+    public double getCustomerConsumption(int c_id){
+        Cliente client = getCustomer(c_id);
+        return client.getConsumo();
+    }
+
     public double getCustomerBenefit(int c_id) throws Exception {
         Cliente client = getCustomer(c_id);
         double consumo = client.getConsumo();
@@ -237,6 +256,10 @@ public class ProbEnergiaBoard {
 
     public int getNGuaranteedCustomersAllocated() {
         return hNGuaranteedCustomersAllocated;
+    }
+
+    public double getLostEnergy(){
+        return hLostEnergy;
     }
 
     public double getStationStopCost(int s_id) throws Exception {
