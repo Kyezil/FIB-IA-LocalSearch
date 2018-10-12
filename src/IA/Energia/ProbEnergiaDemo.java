@@ -29,7 +29,7 @@ public class ProbEnergiaDemo {
         System.out.println(problem.toString());
         // timer
         long time_0 = System.currentTimeMillis();
-        // EnergiaHillClimbingSearch(problem);
+        EnergiaHillClimbingSearch(problem);
         EnergiaSimulatedAnnealingSearch(problem);
         long dtime = System.currentTimeMillis() - time_0;
         System.out.println("\nTime elapsed: " + dtime + " ms");

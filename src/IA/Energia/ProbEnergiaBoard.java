@@ -74,17 +74,17 @@ public class ProbEnergiaBoard {
     }
 
     // OPERATORS
-    public boolean canAllocateCustomer2Station(int c_id, int s_id) {
-        return !isCustomerAllocated(c_id) // not already assigned
-            && (stationRemainingProduction[s_id] >= consumerConsumptionInStation(c_id, s_id)); // has enough space
-    }
-
     // can allocate so that the remaining production proportion is above max_prod_prop in [0,1]
     public boolean canAllocateCustomer2Station(int c_id, int s_id, double max_prod_prop) {
         if (customer2station[c_id] != UNALLOCATED) return false;
         double prop_after_assign = (stationRemainingProduction[s_id] - consumerConsumptionInStation(c_id, s_id))
-                                    / getStation(s_id).getProduccion();
+                / getStation(s_id).getProduccion();
         return prop_after_assign >= 1-max_prod_prop;
+    }
+
+    public boolean canAllocateCustomer2Station(int c_id, int s_id) {
+        return !isCustomerAllocated(c_id) // not already assigned
+            && (stationRemainingProduction[s_id] >= consumerConsumptionInStation(c_id, s_id)); // has enough space
     }
 
     public void allocateCustomer2Station(int c_id, int s_id) throws Exception {
@@ -130,10 +130,13 @@ public class ProbEnergiaBoard {
         return newRemaining_s1 >= 0 && newRemaining_s2 >= 0;
     }
 
-    public void swapCustomers(int c_id1, int c_id2){
+    public void swapCustomers(int c_id1, int c_id2) throws Exception {
+
         int s_id1 = customer2station[c_id1];
         int s_id2 = customer2station[c_id2];
-        hEntropy -= getStationEntropy(s_id1);
+        reallocateCustomer(c_id1,s_id2);
+        reallocateCustomer(c_id2,s_id1);
+        /*hEntropy -= getStationEntropy(s_id1);
         hEntropy -= getStationEntropy(s_id2);
         double current_consumption_c1 = consumerConsumptionInStation(c_id1, s_id1);
         double current_consumption_c2 = consumerConsumptionInStation(c_id2, s_id2);
@@ -145,7 +148,7 @@ public class ProbEnergiaBoard {
         customer2station[c_id2] = s_id1;
         hEntropy += getStationEntropy(s_id1);
         hEntropy += getStationEntropy(s_id2);
-        // Aqui es faria el calcul heuristic
+        // Aqui es faria el calcul heuristic*/
     }
 
     public boolean canReallocateCustomer(int c_id, int s_id){
@@ -155,7 +158,9 @@ public class ProbEnergiaBoard {
     }
 
     public void reallocateCustomer(int c_id, int s_id) throws Exception {
-        int current_s_id = customer2station[c_id];
+        deallocateCustomer(c_id);
+        allocateCustomer2Station(c_id, s_id);
+        /*int current_s_id = customer2station[c_id];
         hEntropy -= getStationEntropy(s_id);
         hEntropy -= getStationEntropy(current_s_id);
         double current_consumption = consumerConsumptionInStation(c_id, current_s_id);
@@ -168,7 +173,7 @@ public class ProbEnergiaBoard {
         if(isStationEmpty(current_s_id)) hBenefit += getStationRunCost(current_s_id) - getStationStopCost(current_s_id);
         customer2station[c_id] = s_id;
         hEntropy += getStationEntropy(s_id);
-        hEntropy += getStationEntropy(current_s_id);
+        hEntropy += getStationEntropy(current_s_id);*/
     }
 
     public boolean canProfOperator(int c_id1, int c_id2){
