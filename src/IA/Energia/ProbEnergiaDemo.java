@@ -6,6 +6,7 @@ import aima.search.framework.SearchAgent;
 import aima.search.informed.HillClimbingSearch;
 import aima.search.informed.SimulatedAnnealingSearch;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
@@ -19,20 +20,24 @@ public class ProbEnergiaDemo {
         try {
             PEgen.setStations(new int[]{5, 10, 25}, RANDOM_SEED);
             PEgen.setCustomers(1000, new double[]{0.25, 0.3, 0.45}, 0.75, RANDOM_SEED);
-            PEgen.greedyMaxCapacityInitState(0.95);
-            //PEgen.randomInitState(RANDOM_SEED);
+            //PEgen.greedyMaxCapacityInitState(0.95);
+            PEgen.randomInitState(RANDOM_SEED);
             //PEgen.randomMaxCapacityInitState(RANDOM_SEED, 1.0);
         } catch(Exception e) {
             e.printStackTrace();
         }
         ProbEnergiaBoard problem = PEgen.getProblem();
         System.out.println(problem.toString());
-        // timer
-        long time_0 = System.currentTimeMillis();
-        EnergiaHillClimbingSearch(problem);
-        EnergiaSimulatedAnnealingSearch(problem);
-        long dtime = System.currentTimeMillis() - time_0;
-        System.out.println("\nTime elapsed: " + dtime + " ms");
+        System.out.println("Starting experiment 1");
+        List times = new ArrayList();
+        for (int i = 0; i < 20; ++i) {
+            long time_0 = System.currentTimeMillis();
+            EnergiaHillClimbingSearch(problem);
+            //EnergiaSimulatedAnnealingSearch(problem);
+            long dtime = System.currentTimeMillis() - time_0;
+            times.add(dtime);
+        }
+        System.out.println("Times elapsed: " + times + " ms");
     }
 
     private static void EnergiaHillClimbingSearch(ProbEnergiaBoard board) {
@@ -41,7 +46,7 @@ public class ProbEnergiaDemo {
             Problem problem = new Problem(board,
                     new ProbEnergiaSuccessorFunction(),
                     new ProbEnergiaGoalTest(),
-                    new ProbEnergiaHeuristicMix());
+                    new ProbEnergiaHeuristicBenefit());
             Search search = new HillClimbingSearch();
             SearchAgent agent = new SearchAgent(problem, search);
 
