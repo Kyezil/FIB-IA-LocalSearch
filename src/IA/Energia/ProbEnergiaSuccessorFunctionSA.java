@@ -14,7 +14,8 @@ public class ProbEnergiaSuccessorFunctionSA implements SuccessorFunction {
     public List getSuccessors (Object o) {
         ArrayList ret = new ArrayList();
         ProbEnergiaBoard board = (ProbEnergiaBoard) o;
-        Random myRandom = new Random(1234); // probablitat proporcional al nombre de successors que generen
+        Random myRandom = new Random();
+        // probabilitat proporcional al nombre de successors que generen
 
         // operators
         // 1. allocate user x station: nm
