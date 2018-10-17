@@ -46,6 +46,13 @@ public class ProbEnergiaSuccessorFunction implements SuccessorFunction {
                         ret.add(new Successor("swap customer " + i + " and " + j +
                                 "\n\t benefit = " + new_board.getBenefit() , new_board));
                     }
+                    if (board.isGuaranteedCustomer(i) && board.isGuaranteedCustomer(j) &&
+                        board.canReplaceCustomer(i,j)) {
+                        ProbEnergiaBoard new_board = new ProbEnergiaBoard(board);
+                        new_board.replaceCustomer(i, j);
+                        ret.add(new Successor("replace customer " + i + " to " + j +
+                                "\n\t benefit = " + new_board.getBenefit() , new_board));
+                    }
                 }
             }
         } catch (Exception e) {

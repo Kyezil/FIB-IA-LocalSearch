@@ -28,6 +28,7 @@ public class ProbEnergiaDemo {
         }
         ProbEnergiaBoard problem = PEgen.getProblem();
         System.out.println(problem.toString());
+
         System.out.println("Starting experiment 1");
         List times = new ArrayList();
         for (int i = 0; i < 20; ++i) {
