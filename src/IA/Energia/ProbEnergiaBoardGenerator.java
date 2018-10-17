@@ -122,4 +122,41 @@ class ProbEnergiaBoardGenerator {
             }
         }
     }
+
+    public void closestInitState(int seed) throws Exception {
+        Random rnd = new Random();
+        rnd.setSeed(seed);
+        int nc = problem.getNCustomers();
+        int ns = problem.getNStations();
+        for(int i=0; i < nc; ++i){
+            if(problem.isGuaranteedCustomer(i)) {
+                int s_id = searchClosestCentral(i, ns);
+                if (problem.canAllocateCustomer2Station(i, s_id, 1.0)) { // NOTA IMPORTANT: No se per que el codi
+                    problem.allocateCustomer2Station(i, s_id);           // amb 0.95  en comptes de 1.0 es no acaba
+                }
+                else {
+                    boolean isAssigned = false;
+                    do { // be careful with infinite loop
+                        s_id = rnd.nextInt(ns);
+                        if (problem.canAllocateCustomer2Station(i, s_id, 1.0)) {
+                            problem.allocateCustomer2Station(i, s_id);
+                            isAssigned = true;
+                        }
+                    } while (!isAssigned);
+                }
+            }
+        }
+    }
+
+    private int searchClosestCentral(int c_id, int num_stations) {
+        double d = problem.distance(c_id, 0);
+        int ret = 0;
+        for(int j = 1; j < num_stations; ++j) {
+            if (problem.distance(c_id, j) < d) {
+                d = problem.distance(c_id, j);
+                ret = j;
+            }
+        }
+        return ret;
+    }
 }

@@ -22,6 +22,7 @@ public class ProbEnergiaDemo {
             PEgen.greedyMaxCapacityInitState(0.95);
             //PEgen.randomInitState(RANDOM_SEED);
             //PEgen.randomMaxCapacityInitState(RANDOM_SEED, 1.0);
+            //PEgen.closestInitState(RANDOM_SEED);
         } catch(Exception e) {
             e.printStackTrace();
         }
