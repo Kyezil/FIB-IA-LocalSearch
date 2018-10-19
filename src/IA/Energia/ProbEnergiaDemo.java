@@ -50,7 +50,7 @@ public class ProbEnergiaDemo {
                 times.add(dtime);
                 if (i == reps-1) {
                     System.out.println("### ACTIONS ###");
-                    //printActions(agent.getActions());
+                    printActions(agent.getActions());
                     System.out.println("### FINAL STATE ###");
                     ProbEnergiaBoard final_board = (ProbEnergiaBoard) search.getGoalState();
                     System.out.println(final_board);
