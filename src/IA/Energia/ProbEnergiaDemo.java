@@ -35,24 +35,32 @@ public class ProbEnergiaDemo {
         System.out.println("\nEnergia HillClimbing  -->");
         try {
             List times = new ArrayList();
-            int reps = 1;
-            for (int i = 0; i < reps; ++i) {
-                System.out.println(i+1 + "/" + reps);
+            List benefits = new ArrayList();
+            int reps = 10;
+            double min_p = 0.4;
+            double max_p = 0.5;
+            for (int i = 0; i <= reps; ++i) {
+                double p = max_p - (max_p - min_p)*(double)i / reps;
+                System.out.println(i + "/" + reps);
                 Problem problem = new Problem(board,
                         new ProbEnergiaSuccessorFunction(),
                         new ProbEnergiaGoalTest(),
-                        new ProbEnergiaHeuristicMix(0.9));
+                        new ProbEnergiaHeuristicMix(p));
                 Search search = new HillClimbingSearch();
                 // timer
                 long time_0 = System.currentTimeMillis();
                 SearchAgent agent = new SearchAgent(problem, search);
                 long dtime = System.currentTimeMillis() - time_0;
                 times.add(dtime);
+
+                ProbEnergiaBoard final_board = (ProbEnergiaBoard) search.getGoalState();
+                System.out.println("p = " + p);
+                benefits.add(final_board.getBenefit());
+
                 if (i == 0) {
                     System.out.println("### ACTIONS ###");
                     //printActions(agent.getActions());
                     System.out.println("### FINAL STATE ###");
-                    ProbEnergiaBoard final_board = (ProbEnergiaBoard) search.getGoalState();
                     System.out.println(final_board);
                     System.out.println("### EXPERIMENT INFO ###");
                     System.out.println("benefici: " + final_board.getBenefit());
@@ -62,7 +70,7 @@ public class ProbEnergiaDemo {
                 }
             }
             System.out.println("Times elapsed (ms): " + times);
-
+            System.out.println("Benefit: " + benefits);
         } catch (Exception e) {
             e.printStackTrace();
         }
