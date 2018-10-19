@@ -6,9 +6,7 @@ import aima.search.framework.SearchAgent;
 import aima.search.informed.HillClimbingSearch;
 import aima.search.informed.SimulatedAnnealingSearch;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 
 public class ProbEnergiaDemo {
     final static int RANDOM_SEED = 1234;
@@ -29,39 +27,48 @@ public class ProbEnergiaDemo {
         ProbEnergiaBoard problem = PEgen.getProblem();
         System.out.println(problem.toString());
 
-        // timer
-        long time_0 = System.currentTimeMillis();
-
         EnergiaHillClimbingSearch(problem);
         //EnergiaSimulatedAnnealingSearch(problem);
-
-        long dtime = System.currentTimeMillis() - time_0;
-        System.out.println("\nTime elapsed: " + dtime + " ms");
     }
 
     private static void EnergiaHillClimbingSearch(ProbEnergiaBoard board) {
         System.out.println("\nEnergia HillClimbing  -->");
         try {
-            Problem problem = new Problem(board,
-                    new ProbEnergiaSuccessorFunction(),
-                    new ProbEnergiaGoalTest(),
-                    new ProbEnergiaHeuristicMix());
-            Search search = new HillClimbingSearch();
-            SearchAgent agent = new SearchAgent(problem, search);
-
-
-            printActions(agent.getActions());
-            printInstrumentation(agent.getInstrumentation());
-
-            System.out.println("Final state =>");
-            ProbEnergiaBoard final_board = (ProbEnergiaBoard) search.getGoalState();
-            displayFinalState(final_board);
+            List times = new ArrayList();
+            int reps = 20;
+            for (int i = 0; i < reps; ++i) {
+                System.out.println(i+1 + "/" + reps);
+                Problem problem = new Problem(board,
+                        new ProbEnergiaSuccessorFunction(),
+                        new ProbEnergiaGoalTest(),
+                        new ProbEnergiaHeuristicMix());
+                Search search = new HillClimbingSearch();
+                // timer
+                long time_0 = System.currentTimeMillis();
+                SearchAgent agent = new SearchAgent(problem, search);
+                long dtime = System.currentTimeMillis() - time_0;
+                times.add(dtime);
+                if (i == reps-1) {
+                    System.out.println("### ACTIONS ###");
+                    //printActions(agent.getActions());
+                    System.out.println("### FINAL STATE ###");
+                    ProbEnergiaBoard final_board = (ProbEnergiaBoard) search.getGoalState();
+                    System.out.println(final_board);
+                    System.out.println("### EXPERIMENT INFO ###");
+                    System.out.println("benefici: " + final_board.getBenefit());
+                    displayCustomersServed(final_board);
+                    printActionsCount(agent.getActions());
+                    printInstrumentation(agent.getInstrumentation());
+                }
+            }
+            System.out.println("Times elapsed (ms): " + times);
 
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
+    /*
     private static void EnergiaSimulatedAnnealingSearch(ProbEnergiaBoard board) {
         System.out.println("\nSimulated Annealing  -->");
         try {
@@ -85,15 +92,29 @@ public class ProbEnergiaDemo {
             e.printStackTrace();
         }
     }
+    */
 
-    private static void displayFinalState(ProbEnergiaBoard final_board) {
-        System.out.println(final_board);
+    private static void displayCustomersServed(ProbEnergiaBoard final_board) {
         // num of customers served
         int customers_served = 0;
-        for (int i = 0; i < final_board.getNCustomers(); ++i) {
-            if (final_board.isCustomerAllocated(i)) customers_served += 1;
+        int guaranteed_served = 0;
+        int total_guaranteed = 0;
+        int n = final_board.getNCustomers();
+        for (int i = 0; i < n; ++i) {
+            if (final_board.isGuaranteedCustomer(i)) {
+                total_guaranteed++;
+                if (final_board.isCustomerAllocated(i)) {
+                    guaranteed_served++;
+                    customers_served++;
+                }
+            } else if (final_board.isCustomerAllocated(i)) {
+                customers_served++;
+            }
         }
-        System.out.println("Number of customers served = " + customers_served);
+        // Customers served: #served (#guaranteed) / #total
+
+        System.out.println("Customers served: " + customers_served + "/" + n);
+        System.out.println("      guaranteed: " + guaranteed_served + "/" + total_guaranteed);
     }
 
     private static void printInstrumentation(Properties properties) {
@@ -111,5 +132,18 @@ public class ProbEnergiaDemo {
             String action = (String) actions.get(i);
             System.out.println(action);
         }
+    }
+
+    private static void printActionsCount(List actions) {
+        Map<String, Integer> count = new HashMap<String, Integer>();
+
+        for (int i = 0; i < actions.size(); ++i) {
+            String action = (String) actions.get(i);
+            // get first word of string
+            String action_name = action.split(" ",2)[0];
+            count.merge(action_name, 1, Integer::sum); // set to 1 or add 1
+        }
+
+        System.out.println("Actions count: " + count);
     }
 }
