@@ -91,46 +91,52 @@ public class ProbEnergiaBoard {
     }
 
     public void allocateCustomer2Station(int c_id, int s_id) throws Exception {
-        if (isGuaranteedCustomer(c_id)) hNGuaranteedCustomersAllocated += 1;
+        // before update
         if(isStationEmpty(s_id)) {
             hBenefit += getStationStopCost(s_id) - getStationRunCost(s_id);
             hLostEnergy += getStationProduction(s_id);
         }
         hEntropy -= getStationEntropy(s_id);
-        hBenefit += getCustomerBenefit(c_id) + getCustomerPenalization(c_id);
-        hLostEnergy -= getCustomerConsumption(c_id);
 
         customer2station[c_id] = s_id;
         stationRemainingProduction[s_id] -= consumerConsumptionInStation(c_id, s_id);
 
+        // after update
+        hBenefit += getCustomerBenefit(c_id) + getCustomerPenalization(c_id);
+        hLostEnergy -= getCustomerConsumption(c_id);
+        if (isGuaranteedCustomer(c_id)) hNGuaranteedCustomersAllocated += 1;
         hEntropy += getStationEntropy(s_id);
     }
 
     public boolean canDeallocateCustomer(int c_id){
-        return isCustomerAllocated(c_id);
+        return isCustomerAllocated(c_id); // no check of guaranteed !
     }
 
     public void deallocateCustomer(int c_id) throws Exception {
         int s_id = customer2station[c_id];
-        stationRemainingProduction[s_id] += consumerConsumptionInStation(c_id, s_id);
-        hLostEnergy += getCustomerConsumption(c_id);
-        if (isGuaranteedCustomer(c_id)) hNGuaranteedCustomersAllocated -= 1;
+        // before update
         hEntropy -= getStationEntropy(s_id);
+        hBenefit -= getCustomerBenefit(c_id) + getCustomerPenalization(c_id);
+        hLostEnergy += getCustomerConsumption(c_id);
+
+        stationRemainingProduction[s_id] += consumerConsumptionInStation(c_id, s_id);
+        customer2station[c_id] = UNALLOCATED;
+
+        // after update
+        if (isGuaranteedCustomer(c_id)) hNGuaranteedCustomersAllocated -= 1;
         if(isStationEmpty(s_id)) {
             hBenefit += getStationRunCost(s_id) - getStationStopCost(s_id);
             hLostEnergy -= getStationProduction(s_id);
         }
-        hBenefit += - getCustomerBenefit(c_id) - getCustomerPenalization(c_id);
         hEntropy += getStationEntropy(s_id);
-
-        customer2station[c_id] = UNALLOCATED;
     }
 
     public boolean canSwapCustomers(int c_id1, int c_id2){
-        if (c_id1 == c_id2) return false;
+        if (c_id1 == c_id2) return false; // cannot swap same customer
         if(!isCustomerAllocated(c_id1) || !isCustomerAllocated(c_id2)) return false;
         int s_id1 = customer2station[c_id1];
         int s_id2 = customer2station[c_id2];
+        if (s_id1 == s_id2) return false; // useless to swap if in same station
         double current_consumption_c1 = consumerConsumptionInStation(c_id1, s_id1);
         double current_consumption_c2 = consumerConsumptionInStation(c_id2, s_id2);
         double new_consumption_c1 = consumerConsumptionInStation(c_id1, s_id2);
@@ -141,53 +147,27 @@ public class ProbEnergiaBoard {
     }
 
     public void swapCustomers(int c_id1, int c_id2) throws Exception {
-
         int s_id1 = customer2station[c_id1];
         int s_id2 = customer2station[c_id2];
         reallocateCustomer(c_id1,s_id2);
         reallocateCustomer(c_id2,s_id1);
-        /*hEntropy -= getStationEntropy(s_id1);
-        hEntropy -= getStationEntropy(s_id2);
-        double current_consumption_c1 = consumerConsumptionInStation(c_id1, s_id1);
-        double current_consumption_c2 = consumerConsumptionInStation(c_id2, s_id2);
-        double new_consumption_c1 = consumerConsumptionInStation(c_id1, s_id2);
-        double new_consumption_c2 = consumerConsumptionInStation(c_id2, s_id1);
-        stationRemainingProduction[s_id1] += current_consumption_c1 - new_consumption_c2;
-        stationRemainingProduction[s_id2] += current_consumption_c2 - new_consumption_c1;
-        customer2station[c_id1] = s_id2;
-        customer2station[c_id2] = s_id1;
-        hEntropy += getStationEntropy(s_id1);
-        hEntropy += getStationEntropy(s_id2);
-        // Aqui es faria el calcul heuristic*/
     }
 
     public boolean canReallocateCustomer(int c_id, int s_id){
         if(!isCustomerAllocated(c_id)) return false;
-        double new_consumption = consumerConsumptionInStation(c_id, s_id);
-        return stationRemainingProduction[s_id] - new_consumption >= 0; // si algo peta, check this
+        int s_id_old = customer2station[c_id];
+        if (s_id_old == s_id) return false; // cannot reallocate to same station
+        return stationRemainingProduction[s_id] >= consumerConsumptionInStation(c_id, s_id);
     }
 
     public void reallocateCustomer(int c_id, int s_id) throws Exception {
         deallocateCustomer(c_id);
         allocateCustomer2Station(c_id, s_id);
-        /*int current_s_id = customer2station[c_id];
-        hEntropy -= getStationEntropy(s_id);
-        hEntropy -= getStationEntropy(current_s_id);
-        double current_consumption = consumerConsumptionInStation(c_id, current_s_id);
-        double new_consumption = consumerConsumptionInStation(c_id, s_id);
-        // Mirem si movem a una central que era buida
-        if(isStationEmpty(s_id)) hBenefit += getStationStopCost(s_id) - getStationRunCost(s_id);
-        stationRemainingProduction[s_id] -= new_consumption;
-        // Mirem si l'actual passa a ser buida
-        stationRemainingProduction[current_s_id] += current_consumption;
-        if(isStationEmpty(current_s_id)) hBenefit += getStationRunCost(current_s_id) - getStationStopCost(current_s_id);
-        customer2station[c_id] = s_id;
-        hEntropy += getStationEntropy(s_id);
-        hEntropy += getStationEntropy(current_s_id);*/
     }
 
 
     public boolean canReplaceCustomer(int c_id1, int c_id2){
+        if (c_id1 == c_id2) return false;
         if(isCustomerAllocated(c_id1) || !isCustomerAllocated(c_id2)) return false;
         int s_id = customer2station[c_id2];
         return stationRemainingProduction[s_id] + consumerConsumptionInStation(c_id2, s_id) - consumerConsumptionInStation(c_id1, s_id) >= 0;

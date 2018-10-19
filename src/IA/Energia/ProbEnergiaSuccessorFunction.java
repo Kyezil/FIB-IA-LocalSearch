@@ -39,7 +39,6 @@ public class ProbEnergiaSuccessorFunction implements SuccessorFunction {
                                 "\n\t benefit = " + new_board.getBenefit() , new_board));
                     }
                 }
-                /*
                 for (int j = 0; j < board.getNCustomers(); ++j) {
                     if (board.canSwapCustomers(i,j)) {
                         ProbEnergiaBoard new_board = new ProbEnergiaBoard(board);
@@ -54,7 +53,7 @@ public class ProbEnergiaSuccessorFunction implements SuccessorFunction {
                         ret.add(new Successor("replace customer " + i + " to " + j +
                                 "\n\t benefit = " + new_board.getBenefit() , new_board));
                     }
-                }*/
+                }
             }
         } catch (Exception e) {
             System.out.println("Problem in generating successors");

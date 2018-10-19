@@ -35,13 +35,13 @@ public class ProbEnergiaDemo {
         System.out.println("\nEnergia HillClimbing  -->");
         try {
             List times = new ArrayList();
-            int reps = 20;
+            int reps = 1;
             for (int i = 0; i < reps; ++i) {
                 System.out.println(i+1 + "/" + reps);
                 Problem problem = new Problem(board,
                         new ProbEnergiaSuccessorFunction(),
                         new ProbEnergiaGoalTest(),
-                        new ProbEnergiaHeuristicMix());
+                        new ProbEnergiaHeuristicMix(0.9));
                 Search search = new HillClimbingSearch();
                 // timer
                 long time_0 = System.currentTimeMillis();
