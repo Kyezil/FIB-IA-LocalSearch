@@ -40,19 +40,19 @@ public class ProbEnergiaSuccessorFunction implements SuccessorFunction {
                     }
                 }
                 for (int j = 0; j < board.getNCustomers(); ++j) {
-                    if (board.canSwapCustomers(i,j)) {
+                    /*if (board.canSwapCustomers(i,j)) {
                         ProbEnergiaBoard new_board = new ProbEnergiaBoard(board);
                         new_board.swapCustomers(i, j);
                         ret.add(new Successor("swap customer " + i + " and " + j +
                                 "\n\t benefit = " + new_board.getBenefit() , new_board));
-                    }
-                    /*if (board.isGuaranteedCustomer(i) && board.isGuaranteedCustomer(j) &&
+                    }*/
+                    if (board.isGuaranteedCustomer(i) && board.isGuaranteedCustomer(j) &&
                         board.canReplaceCustomer(i,j)) {
                         ProbEnergiaBoard new_board = new ProbEnergiaBoard(board);
                         new_board.replaceCustomer(i, j);
                         ret.add(new Successor("replace customer " + i + " to " + j +
                                 "\n\t benefit = " + new_board.getBenefit() , new_board));
-                    }*/
+                    }
                 }
             }
         } catch (Exception e) {
