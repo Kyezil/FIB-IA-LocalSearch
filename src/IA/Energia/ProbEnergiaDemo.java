@@ -28,10 +28,13 @@ public class ProbEnergiaDemo {
         }
         ProbEnergiaBoard problem = PEgen.getProblem();
         System.out.println(problem.toString());
+
         // timer
         long time_0 = System.currentTimeMillis();
+
         EnergiaHillClimbingSearch(problem);
         //EnergiaSimulatedAnnealingSearch(problem);
+
         long dtime = System.currentTimeMillis() - time_0;
         System.out.println("\nTime elapsed: " + dtime + " ms");
     }
@@ -42,7 +45,7 @@ public class ProbEnergiaDemo {
             Problem problem = new Problem(board,
                     new ProbEnergiaSuccessorFunction(),
                     new ProbEnergiaGoalTest(),
-                    new ProbEnergiaHeuristicBenefit());
+                    new ProbEnergiaHeuristicMix());
             Search search = new HillClimbingSearch();
             SearchAgent agent = new SearchAgent(problem, search);
 
