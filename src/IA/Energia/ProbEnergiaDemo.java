@@ -48,7 +48,7 @@ public class ProbEnergiaDemo {
                 SearchAgent agent = new SearchAgent(problem, search);
                 long dtime = System.currentTimeMillis() - time_0;
                 times.add(dtime);
-                if (i == reps-1) {
+                if (i == 0) {
                     System.out.println("### ACTIONS ###");
                     printActions(agent.getActions());
                     System.out.println("### FINAL STATE ###");
