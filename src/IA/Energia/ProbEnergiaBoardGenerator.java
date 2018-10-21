@@ -141,26 +141,20 @@ class ProbEnergiaBoardGenerator {
         }
     }
 
-    public void unguaranteedGreedyInitState(int seed, double prob) throws Exception {
-        unguaranteedGreedyMaxCapacityInitState(seed, prob, 1.0);
-    }
-
-    public void unguaranteedGreedyMaxCapacityInitState(int seed, double prob, double max_c) throws Exception {
-        Random rnd = new Random();
+    //igual que greedyMaxCapacityInitState però assignant a tots els clients, no nomes els garantits.   
+    public void unguaranteedGreedyMaxCapacityInitState(double max_c) throws Exception {
         int nc = problem.getNCustomers();
         int ns = problem.getNStations();
         int current_central = 0;
         for(int i=0; i < nc; ++i){
-            if(rnd.nextDouble() <= prob){
-                boolean isAssigned = false;
-                do {
-                    if(problem.canAllocateCustomer2Station(i, current_central, max_c)){
-                        problem.allocateCustomer2Station(i, current_central);
-                        isAssigned = true;
-                    }
-                    else current_central = (current_central + 1) % ns;
-                } while (!isAssigned);
-            }
+            boolean isAssigned = false;
+            do {
+                if(problem.canAllocateCustomer2Station(i, current_central, max_c)){
+                    problem.allocateCustomer2Station(i, current_central);
+                    isAssigned = true;
+                }
+                else current_central = (current_central + 1) % ns;
+            } while (!isAssigned);
         }
     }
 
