@@ -26,9 +26,9 @@ public class ProbEnergiaDemo {
         }
         ProbEnergiaBoard problem = PEgen.getProblem();
         System.out.println(problem.toString());
-
-        EnergiaHillClimbingSearch(problem);
-        //EnergiaSimulatedAnnealingSearch(problem);
+        displayCustomersServed(problem);
+        //EnergiaHillClimbingSearch(problem);
+        EnergiaSimulatedAnnealingSearch(problem);
     }
 
     private static void EnergiaHillClimbingSearch(ProbEnergiaBoard board) {
@@ -68,31 +68,37 @@ public class ProbEnergiaDemo {
         }
     }
 
-    /*
+
     private static void EnergiaSimulatedAnnealingSearch(ProbEnergiaBoard board) {
         System.out.println("\nSimulated Annealing  -->");
         try {
-            Problem problem = new Problem(board,
-                    new ProbEnergiaSuccessorFunctionSA(),
-                    new ProbEnergiaGoalTest(),
-                    new ProbEnergiaHeuristicBenefit());
-            SimulatedAnnealingSearch search = new SimulatedAnnealingSearch(800000, 200, 5, 0.001);
-            //search.traceOn();
-            SearchAgent agent = new SearchAgent(problem, search);
+            int reps = 2;
+            for (int i = 0; i < reps; ++i) {
+                Problem problem = new Problem(board,
+                        new ProbEnergiaSuccessorFunctionSA(),
+                        new ProbEnergiaGoalTest(),
+                        new ProbEnergiaHeuristicMix(0.45));
 
-            System.out.println();
-            //printActions(agent.getActions()); // not accessible for simulated annealing
-            printInstrumentation(agent.getInstrumentation());
+                System.out.println(i+1 + "/" + reps);
 
-            System.out.println("Final state =>");
-            ProbEnergiaBoard final_board = (ProbEnergiaBoard) search.getGoalState();
-            displayFinalState(final_board);
+                SimulatedAnnealingSearch search = new SimulatedAnnealingSearch(10000, 200, 5, 0.001);
+
+                //search.traceOn();
+                SearchAgent agent = new SearchAgent(problem, search);
+                printInstrumentation(agent.getInstrumentation());
+                System.out.println("### FINAL STATE ###");
+                ProbEnergiaBoard final_board = (ProbEnergiaBoard) search.getGoalState();
+                System.out.println(final_board);
+                System.out.println("### EXPERIMENT INFO ###");
+                System.out.println("benefici: " + final_board.getBenefit());
+                displayCustomersServed(final_board);
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-    */
+
 
     private static void displayCustomersServed(ProbEnergiaBoard final_board) {
         // num of customers served
