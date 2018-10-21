@@ -1,6 +1,13 @@
 package IA.Energia;
 
+
+
+
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Random;
+
 
 // Generates a ProbEnergiaBoard from a configuration
 class ProbEnergiaBoardGenerator {
@@ -68,6 +75,40 @@ class ProbEnergiaBoardGenerator {
                     }
                     else current_central = (current_central + 1) % ns;
                 } while (!isAssigned);
+            }
+        }
+    }
+
+    public void realGreedyInitState() throws Exception {
+        int nc = problem.getNCustomers();
+        int ns = problem.getNStations();
+        List<Integer> consumption = new ArrayList<>();
+        for(int i = 0; i < nc; ++i){
+            consumption.add(i);
+        }
+        consumption.sort((m1, m2) -> {
+
+            if(problem.getCustomerConsumption(m1) == problem.getCustomerConsumption(m2)){
+
+                return 0;
+
+            }
+            if(problem.getCustomerConsumption(m1) < problem.getCustomerConsumption(m2)){
+
+                return 1;
+
+            }
+            return -1;
+
+        });
+        for(int k=0; k < nc; ++k){
+            int i = consumption.get(k);
+            boolean isAssigned = false;
+            for(int j = 0; !isAssigned && j < ns; ++j){
+                if(problem.canAllocateCustomer2Station(i, j)){
+                    problem.allocateCustomer2Station(i, j);
+                    isAssigned = true;
+                }
             }
         }
     }
