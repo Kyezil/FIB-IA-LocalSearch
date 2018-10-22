@@ -6,31 +6,60 @@ import aima.search.framework.SearchAgent;
 import aima.search.informed.HillClimbingSearch;
 import aima.search.informed.SimulatedAnnealingSearch;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.*;
 
 public class ProbEnergiaDemo {
     final static int RANDOM_SEED = 1234;
 
     public static void main(String[] args) throws Exception {
-        // EXPERIMENT 1
-        ProbEnergiaBoardGenerator PEgen = new ProbEnergiaBoardGenerator();
-        try {
-            PEgen.setStations(new int[]{5, 10, 25}, RANDOM_SEED);
-            PEgen.setCustomers(1000, new double[]{0.25, 0.3, 0.45}, 0.75, RANDOM_SEED);
-            //PEgen.greedyMaxCapacityInitState(0.95);
-            PEgen.randomInitState(RANDOM_SEED);
-            //PEgen.randomMaxCapacityInitState(RANDOM_SEED, 1.0);
-            //PEgen.closestInitState(RANDOM_SEED);
-        } catch(Exception e) {
-            e.printStackTrace();
-        }
-        ProbEnergiaBoard problem = PEgen.getProblem();
-        System.out.println(problem.toString());
-        displayCustomersServed(problem);
-        //EnergiaHillClimbingSearch(problem);
-        EnergiaSimulatedAnnealingSearch(problem);
+        // EXPERIMENT 2
+        studyInitSolution();
     }
 
+    private static void studyInitSolution() throws Exception {
+        List times = new ArrayList();
+        List benefici = new ArrayList();
+        List cserved = new ArrayList();
+        for (int i = 0; i < 50; ++i) {
+            ProbEnergiaBoardGenerator PEgen = new ProbEnergiaBoardGenerator();
+
+            try {
+                PEgen.setStations(new int[]{5, 10, 25}, RANDOM_SEED);
+                PEgen.setCustomers(1000, new double[]{0.25, 0.3, 0.45}, 0.75, RANDOM_SEED);
+            } catch(Exception e) {
+                e.printStackTrace();
+            }
+            Instant before = Instant.now();
+            //PEgen.randomInitState(RANDOM_SEED+i);
+            //PEgen.randomMaxCapacityInitState(RANDOM_SEED+1, 0.90);
+            //PEgen.randomMaxCapacityInitState(RANDOM_SEED+1, 0.95);
+            //PEgen.greedyInitState();
+            //PEgen.greedyMaxCapacityInitState(0.90);
+            //PEgen.greedyMaxCapacityInitState(0.95);
+            //PEgen.closestInitState(RANDOM_SEED+i);
+            PEgen.realGreedyInitState();
+
+            Instant after = Instant.now();
+            long dtime = Duration.between(before, after).toMillis(); // .toWhatsoever()
+
+            ProbEnergiaBoard problem = PEgen.getProblem();
+
+            System.out.println("Sol. inicial");
+            System.out.println(problem);
+            System.out.println("benefici: " + problem.getBenefit());
+            int served = displayCustomersServed(problem);
+            times.add(dtime);
+            benefici.add(problem.getBenefit());
+            cserved.add(served);
+        }
+        System.out.println("Temps: " + times);
+        System.out.println("Benefici: "+ benefici);
+        System.out.println("Servits: "+ cserved);
+    }
+
+/*
     private static void EnergiaHillClimbingSearch(ProbEnergiaBoard board) {
         System.out.println("\nEnergia HillClimbing  -->");
         try {
@@ -68,7 +97,6 @@ public class ProbEnergiaDemo {
         }
     }
 
-
     private static void EnergiaSimulatedAnnealingSearch(ProbEnergiaBoard board) {
         System.out.println("\nSimulated Annealing  -->");
         try {
@@ -98,9 +126,10 @@ public class ProbEnergiaDemo {
             e.printStackTrace();
         }
     }
+*/
 
 
-    private static void displayCustomersServed(ProbEnergiaBoard final_board) {
+    private static int displayCustomersServed(ProbEnergiaBoard final_board) {
         // num of customers served
         int customers_served = 0;
         int guaranteed_served = 0;
@@ -121,6 +150,7 @@ public class ProbEnergiaDemo {
 
         System.out.println("Customers served: " + customers_served + "/" + n);
         System.out.println("      guaranteed: " + guaranteed_served + "/" + total_guaranteed);
+        return  customers_served;
     }
 
     private static void printInstrumentation(Properties properties) {
