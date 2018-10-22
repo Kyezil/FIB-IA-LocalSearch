@@ -18,7 +18,7 @@ public class ProbEnergiaDemo {
             PEgen.setStations(new int[]{5, 10, 25}, RANDOM_SEED);
             PEgen.setCustomers(1000, new double[]{0.25, 0.3, 0.45}, 0.75, RANDOM_SEED);
             //PEgen.greedyMaxCapacityInitState(0.95);
-            PEgen.randomInitState(RANDOM_SEED);
+            //PEgen.randomInitState(RANDOM_SEED);
             //PEgen.randomMaxCapacityInitState(RANDOM_SEED, 1.0);
             //PEgen.closestInitState(RANDOM_SEED);
         } catch(Exception e) {
@@ -27,8 +27,8 @@ public class ProbEnergiaDemo {
         ProbEnergiaBoard problem = PEgen.getProblem();
         System.out.println(problem.toString());
         displayCustomersServed(problem);
-        //EnergiaHillClimbingSearch(problem);
-        EnergiaSimulatedAnnealingSearch(problem);
+        EnergiaHillClimbingSearch(problem);
+        //EnergiaSimulatedAnnealingSearch(problem);
     }
 
     private static void EnergiaHillClimbingSearch(ProbEnergiaBoard board) {
@@ -41,7 +41,7 @@ public class ProbEnergiaDemo {
                 Problem problem = new Problem(board,
                         new ProbEnergiaSuccessorFunction(),
                         new ProbEnergiaGoalTest(),
-                        new ProbEnergiaHeuristicMix(0.9));
+                        new ProbEnergiaHeuristicMix(0.45));
                 Search search = new HillClimbingSearch();
                 // timer
                 long time_0 = System.currentTimeMillis();
