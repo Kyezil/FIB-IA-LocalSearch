@@ -15,6 +15,9 @@ public class ProbEnergiaHeuristicMix implements HeuristicFunction {
         ProbEnergiaBoard board = (ProbEnergiaBoard) state;
         HeuristicFunction ben = new ProbEnergiaHeuristicBenefit();
         HeuristicFunction ent = new ProbEnergiaHeuristicEntropy();
-        return p * ben.getHeuristicValue(board)/3e4 + (1-p) * ent.getHeuristicValue(board);
+        HeuristicFunction gar = new ProbEnergiaHeuristicGuaranteed();
+        return p * ben.getHeuristicValue(board)/3e4 + (1-p) * ent.getHeuristicValue(board)
+                - factorPenal * gar.getHeuristicValue(board);
     }
 }
+//

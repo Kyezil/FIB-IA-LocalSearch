@@ -36,6 +36,7 @@ public class ProbEnergiaBoard {
         this.hBenefit = board.hBenefit;
         this.hEntropy = board.hEntropy;
         this.hLostEnergy = board.hLostEnergy;
+        this.hNGuaranteedCustomersAllocated = board.hNGuaranteedCustomersAllocated;
     }
 
     // SETTERS AND GETTERS

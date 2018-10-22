@@ -19,7 +19,7 @@ public class ProbEnergiaSuccessorFunction implements SuccessorFunction {
         // 4. swap
         try {
             for (int i = 0; i < board.getNCustomers(); ++i) {
-                if (board.canDeallocateCustomer(i) && !board.isGuaranteedCustomer(i)) { //afegeixo el check perquè ha desaparegut del canDeallocateCustomer
+                if (board.canDeallocateCustomer(i)) { //afegeixo el check perquè ha desaparegut del canDeallocateCustomer
                     ProbEnergiaBoard new_board = new ProbEnergiaBoard(board);
                     new_board.deallocateCustomer(i);
                     ret.add(new Successor("deallocate customer " + i +
@@ -46,7 +46,7 @@ public class ProbEnergiaSuccessorFunction implements SuccessorFunction {
                         ret.add(new Successor("swap customer " + i + " and " + j +
                                 "\n\t benefit = " + new_board.getBenefit() , new_board));
                     }
-                    if (board.isGuaranteedCustomer(i) && board.isGuaranteedCustomer(j) &&
+                    if (!board.isGuaranteedCustomer(j) &&
                         board.canReplaceCustomer(i,j)) {
                         ProbEnergiaBoard new_board = new ProbEnergiaBoard(board);
                         new_board.replaceCustomer(i, j);
