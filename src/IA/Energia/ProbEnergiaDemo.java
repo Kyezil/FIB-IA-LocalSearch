@@ -6,53 +6,67 @@ import aima.search.framework.SearchAgent;
 import aima.search.informed.HillClimbingSearch;
 import aima.search.informed.SimulatedAnnealingSearch;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.*;
 
 public class ProbEnergiaDemo {
     final static int RANDOM_SEED = 1234;
 
     public static void main(String[] args) throws Exception {
-        // EXPERIMENT 1
-        ProbEnergiaBoardGenerator PEgen = new ProbEnergiaBoardGenerator();
-        try {
-            PEgen.setStations(new int[]{5, 10, 25}, RANDOM_SEED);
-            PEgen.setCustomers(1000, new double[]{0.25, 0.3, 0.45}, 0.75, RANDOM_SEED);
-            //PEgen.greedyMaxCapacityInitState(0.95);
-            PEgen.randomInitState(RANDOM_SEED);
-            //PEgen.randomMaxCapacityInitState(RANDOM_SEED, 1.0);
-            //PEgen.closestInitState(RANDOM_SEED);
-        } catch(Exception e) {
-            e.printStackTrace();
-        }
-        ProbEnergiaBoard problem = PEgen.getProblem();
-        System.out.println(problem.toString());
-        displayCustomersServed(problem);
-        //EnergiaHillClimbingSearch(problem);
-        EnergiaSimulatedAnnealingSearch(problem);
+        // EXPERIMENT 2
+        studyInitSolution();
     }
 
-    private static void EnergiaHillClimbingSearch(ProbEnergiaBoard board) {
-        System.out.println("\nEnergia HillClimbing  -->");
-        try {
-            List times = new ArrayList();
-            int reps = 1;
-            for (int i = 0; i < reps; ++i) {
-                System.out.println(i+1 + "/" + reps);
+    private static void studyInitSolution() throws Exception {
+        int reps = 10;
+
+        List times = new ArrayList();
+        List beneficis = new ArrayList();
+        List customers = new ArrayList();
+        List nodes = new ArrayList();
+
+        for (int i = 0; i < reps; ++i) {
+            System.out.println(i + 1 + "/" + reps);
+            ProbEnergiaBoardGenerator PEgen = new ProbEnergiaBoardGenerator();
+            try {
+                PEgen.setStations(new int[]{5, 10, 25}, RANDOM_SEED);
+                PEgen.setCustomers(1000, new double[]{0.25, 0.3, 0.45}, 0.75, RANDOM_SEED);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            //PEgen.randomInitState(RANDOM_SEED + i);
+            PEgen.randomMaxCapacityInitState(RANDOM_SEED+1, 0.90);
+            //PEgen.randomMaxCapacityInitState(RANDOM_SEED+1, 0.95);
+            //PEgen.greedyInitState();
+            //PEgen.greedyMaxCapacityInitState(0.90);
+            //PEgen.greedyMaxCapacityInitState(0.95);
+            //PEgen.closestInitState(RANDOM_SEED+i);
+            //PEgen.realGreedyInitState();
+            ProbEnergiaBoard board = PEgen.getProblem();
+            try {
                 Problem problem = new Problem(board,
                         new ProbEnergiaSuccessorFunction(),
                         new ProbEnergiaGoalTest(),
                         new ProbEnergiaHeuristicMix(0.45));
                 Search search = new HillClimbingSearch();
                 // timer
-                long time_0 = System.currentTimeMillis();
+
+                Instant before = Instant.now();
                 SearchAgent agent = new SearchAgent(problem, search);
-                long dtime = System.currentTimeMillis() - time_0;
+                Instant after = Instant.now();
+                long dtime = Duration.between(before, after).toMillis(); // .toWhatsoever()
+
+                ProbEnergiaBoard final_board = (ProbEnergiaBoard) search.getGoalState();
+
                 times.add(dtime);
+                beneficis.add(final_board.getBenefit());
+                customers.add(final_board.getNCustomersAllocated());
+                nodes.add(agent.getInstrumentation().getProperty("nodesExpanded"));
                 if (i == 0) {
                     System.out.println("### ACTIONS ###");
                     //printActions(agent.getActions());
                     System.out.println("### FINAL STATE ###");
-                    ProbEnergiaBoard final_board = (ProbEnergiaBoard) search.getGoalState();
                     System.out.println(final_board);
                     System.out.println("### EXPERIMENT INFO ###");
                     System.out.println("benefici: " + final_board.getBenefit());
@@ -60,15 +74,29 @@ public class ProbEnergiaDemo {
                     printActionsCount(agent.getActions());
                     printInstrumentation(agent.getInstrumentation());
                 }
+            } catch(Exception e){
+                e.printStackTrace();
             }
-            System.out.println("Times elapsed (ms): " + times);
-
-        } catch (Exception e) {
-            e.printStackTrace();
         }
+        System.out.println("temps = " + format4R(times) + ",");
+        System.out.println("beneficis = " + format4R(beneficis) + ",");
+        System.out.println("nodes = " + format4R(nodes) + ",");
+        System.out.println("customers = " + format4R(customers));
     }
 
-
+    private static String format4R(List l) {
+        StringBuilder builder = new StringBuilder();
+        builder.append("c(");
+        for (int i = 0; i < l.size(); ++i) {
+            if (i != 0) {
+                builder.append(", ");
+            }
+            builder.append(l.get(i));
+        }
+        builder.append(')');
+        return builder.toString();
+    }
+/*
     private static void EnergiaSimulatedAnnealingSearch(ProbEnergiaBoard board) {
         System.out.println("\nSimulated Annealing  -->");
         try {
@@ -98,9 +126,10 @@ public class ProbEnergiaDemo {
             e.printStackTrace();
         }
     }
+*/
 
 
-    private static void displayCustomersServed(ProbEnergiaBoard final_board) {
+    private static int displayCustomersServed(ProbEnergiaBoard final_board) {
         // num of customers served
         int customers_served = 0;
         int guaranteed_served = 0;
@@ -121,6 +150,7 @@ public class ProbEnergiaDemo {
 
         System.out.println("Customers served: " + customers_served + "/" + n);
         System.out.println("      guaranteed: " + guaranteed_served + "/" + total_guaranteed);
+        return  customers_served;
     }
 
     private static void printInstrumentation(Properties properties) {

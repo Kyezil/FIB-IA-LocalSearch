@@ -240,6 +240,14 @@ public class ProbEnergiaBoard {
         return hNGuaranteedCustomersAllocated;
     }
 
+    public int getNCustomersAllocated() {
+        int res = 0;
+        for (int i = 0; i < getNCustomers(); ++i) {
+            if (isCustomerAllocated(i)) ++res;
+        }
+        return res;
+    }
+
     public double getLostEnergy(){
         return hLostEnergy;
     }
