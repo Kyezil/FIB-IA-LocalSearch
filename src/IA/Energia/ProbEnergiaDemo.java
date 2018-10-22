@@ -41,7 +41,7 @@ public class ProbEnergiaDemo {
                 Problem problem = new Problem(board,
                         new ProbEnergiaSuccessorFunction(),
                         new ProbEnergiaGoalTest(),
-                        new ProbEnergiaHeuristicMix(0.9));
+                        new ProbEnergiaHeuristicMix(0.45));
                 Search search = new HillClimbingSearch();
                 // timer
                 long time_0 = System.currentTimeMillis();
