@@ -19,25 +19,24 @@ public class ProbEnergiaDemo {
     }
 
     private static void studyTimeCostBySize() throws Exception {
-        int reps = 12;
+        int reps = 10;
 
         List times = new ArrayList();
 
-        for (int j = 0; j < 3; ++j) {
+        for (int j = 0; j < 3; ++j) { // reps externes
             times.clear();
-            for (int i = 0; i < reps; ++i) {
-            System.out.println(i + 1 + "/" + reps);
-                int clientes = 100 * (i+1);
-                System.out.println("Clientes " + clientes);
+            for (int i = 1; i <= reps; ++i) { // reps internes
+            System.out.println(i + "/" + reps);
+                int tipusC = i*5;
                 ProbEnergiaBoardGenerator PEgen = new ProbEnergiaBoardGenerator();
                 try {
-                    PEgen.setStations(new int[]{5, 10, 25}, RANDOM_SEED+i);
-                    PEgen.setCustomers(clientes, new double[]{0.25, 0.3, 0.45}, 0.75, RANDOM_SEED+i);
+                    PEgen.setStations(new int[]{5, 10, tipusC}, RANDOM_SEED+i);
+                    PEgen.setCustomers(200, new double[]{0.25, 0.3, 0.45}, 0.75, RANDOM_SEED+i);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
 
-                PEgen.closestInitState(RANDOM_SEED);
+                PEgen.closestInitState(RANDOM_SEED+i);
 
                 ProbEnergiaBoard board = PEgen.getProblem();
                 try {
