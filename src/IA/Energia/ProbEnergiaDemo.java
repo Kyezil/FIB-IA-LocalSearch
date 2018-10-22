@@ -23,21 +23,23 @@ public class ProbEnergiaDemo {
 
         List times = new ArrayList();
 
-        for (int j = 0; j < 3; ++j) {
+        for (int j = 0; j < 5; ++j) {
             times.clear();
             for (int i = 0; i < reps; ++i) {
             System.out.println(i + 1 + "/" + reps);
                 int clientes = 100 * (i+1);
                 System.out.println("Clientes " + clientes);
                 ProbEnergiaBoardGenerator PEgen = new ProbEnergiaBoardGenerator();
+
+                int rand = RANDOM_SEED + (i+1)*(j+1);
                 try {
-                    PEgen.setStations(new int[]{5, 10, 25}, RANDOM_SEED+i);
-                    PEgen.setCustomers(clientes, new double[]{0.25, 0.3, 0.45}, 0.75, RANDOM_SEED+i);
+                    PEgen.setStations(new int[]{5, 10, 25}, rand);
+                    PEgen.setCustomers(clientes, new double[]{0.25, 0.3, 0.45}, 0.75, rand);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
 
-                PEgen.closestInitState(RANDOM_SEED);
+                PEgen.closestInitState(rand);
 
                 ProbEnergiaBoard board = PEgen.getProblem();
                 try {
