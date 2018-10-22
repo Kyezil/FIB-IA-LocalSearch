@@ -23,15 +23,15 @@ public class ProbEnergiaDemo {
 
         List times = new ArrayList();
 
-        for (int j = 0; j < 10; ++j) {
+        for (int j = 0; j < 3; ++j) {
             times.clear();
-            for (int i = 1; i <= reps; ++i) {
-            //System.out.println(i + "/" + reps);
-                //System.out.println("Centrals " + i);
+            for (int i = 0; i < reps; ++i) {
+            System.out.println(i + 1 + "/" + reps);
+                System.out.println("Clientes " + 100 * (i + 1));
                 ProbEnergiaBoardGenerator PEgen = new ProbEnergiaBoardGenerator();
                 try {
-                    PEgen.setStations(new int[]{1*i, 2*i, 5*i}, RANDOM_SEED);
-                    PEgen.setCustomers(100, new double[]{0.25, 0.3, 0.45}, 0.75, RANDOM_SEED);
+                    PEgen.setStations(new int[]{5, 10, 25}, RANDOM_SEED);
+                    PEgen.setCustomers(100 * (i + 1), new double[]{0.25, 0.3, 0.45}, 0.75, RANDOM_SEED);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -66,7 +66,6 @@ public class ProbEnergiaDemo {
                         printActionsCount(agent.getActions());
                         printInstrumentation(agent.getInstrumentation());
                     }
-
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
