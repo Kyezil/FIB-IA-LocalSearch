@@ -82,31 +82,42 @@ class ProbEnergiaBoardGenerator {
     public void realGreedyInitState() throws Exception {
         int nc = problem.getNCustomers();
         int ns = problem.getNStations();
-        List<Integer> consumption = new ArrayList<>();
+        List<Integer> clientes = new ArrayList<>();
+        List<Integer> centrales = new ArrayList<>();
         for(int i = 0; i < nc; ++i){
-            consumption.add(i);
+            clientes.add(i);
         }
-        consumption.sort((m1, m2) -> {
-
-            if(problem.getCustomerConsumption(m1) == problem.getCustomerConsumption(m2)){
-
-                return 0;
-
+        for(int i = 0; i < ns; ++i){
+            centrales.add(i);
+        }
+        clientes.sort((m1, m2) -> { // m1 < m2 -> -1
+            if (problem.isGuaranteedCustomer(m1) == problem.isGuaranteedCustomer(m2)) {
+                if (problem.getCustomerConsumption(m1) == problem.getCustomerConsumption(m2)) {
+                    return 0;
+                }
+                if (problem.getCustomerConsumption(m1) < problem.getCustomerConsumption(m2)) {
+                    return 1;
+                }
+                return -1;
             }
-            if(problem.getCustomerConsumption(m1) < problem.getCustomerConsumption(m2)){
-
+            return (problem.isGuaranteedCustomer(m1) ? -1 : 1);
+        });
+        centrales.sort((m1, m2) -> { // m1 < m2 -> -1
+            if (problem.getStationProduction(m1) == problem.getStationProduction(m2)) {
+                return 0;
+            }
+            if (problem.getStationProduction(m1) < problem.getStationProduction(m2)) {
                 return 1;
-
             }
             return -1;
-
         });
+
         for(int k=0; k < nc; ++k){
-            int i = consumption.get(k);
+            int i = clientes.get(k);
             boolean isAssigned = false;
             for(int j = 0; !isAssigned && j < ns; ++j){
-                if(problem.canAllocateCustomer2Station(i, j)){
-                    problem.allocateCustomer2Station(i, j);
+                if(problem.canAllocateCustomer2Station(i, centrales.get(j))){
+                    problem.allocateCustomer2Station(i, centrales.get(j));
                     isAssigned = true;
                 }
             }
