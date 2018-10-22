@@ -9,7 +9,7 @@ import aima.search.informed.SimulatedAnnealingSearch;
 import java.util.*;
 
 public class ProbEnergiaDemo {
-    final static int RANDOM_SEED = 1234;
+    final static int RANDOM_SEED = 1237;
 
     public static void main(String[] args) throws Exception {
         // EXPERIMENT 1
@@ -27,8 +27,8 @@ public class ProbEnergiaDemo {
         ProbEnergiaBoard problem = PEgen.getProblem();
         System.out.println(problem.toString());
         displayCustomersServed(problem);
-        EnergiaHillClimbingSearch(problem);
-        //EnergiaSimulatedAnnealingSearch(problem);
+        //EnergiaHillClimbingSearch(problem);
+        EnergiaSimulatedAnnealingSearch(problem);
     }
 
     private static void EnergiaHillClimbingSearch(ProbEnergiaBoard board) {
@@ -41,7 +41,7 @@ public class ProbEnergiaDemo {
                 Problem problem = new Problem(board,
                         new ProbEnergiaSuccessorFunction(),
                         new ProbEnergiaGoalTest(),
-                        new ProbEnergiaHeuristicMix(0.45, 0.2));
+                        new ProbEnergiaHeuristicMix(0.45, 10));
                 Search search = new HillClimbingSearch();
                 // timer
                 long time_0 = System.currentTimeMillis();
@@ -77,11 +77,11 @@ public class ProbEnergiaDemo {
                 Problem problem = new Problem(board,
                         new ProbEnergiaSuccessorFunctionSA(),
                         new ProbEnergiaGoalTest(),
-                        new ProbEnergiaHeuristicMix(0.45, 0));
+                        new ProbEnergiaHeuristicMix(0.45, 1000000));
 
                 System.out.println(i+1 + "/" + reps);
 
-                SimulatedAnnealingSearch search = new SimulatedAnnealingSearch(10000, 200, 5, 0.001);
+                SimulatedAnnealingSearch search = new SimulatedAnnealingSearch(500000, 200, 22, 0.007);
 
                 //search.traceOn();
                 SearchAgent agent = new SearchAgent(problem, search);
