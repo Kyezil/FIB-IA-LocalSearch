@@ -19,7 +19,7 @@ public class ProbEnergiaDemo {
     }
 
     private static void studyTimeCostBySize() throws Exception {
-        int reps = 10;
+        int reps = 1;
 
         List times = new ArrayList();
 
@@ -55,7 +55,7 @@ public class ProbEnergiaDemo {
                     ProbEnergiaBoard final_board = (ProbEnergiaBoard) search.getGoalState();
 
                     times.add(dtime);
-                    if (i == 0) {
+                    if (i == 1) {
                         System.out.println("### ACTIONS ###");
                         //printActions(agent.getActions());
                         System.out.println("### FINAL STATE ###");
@@ -65,6 +65,7 @@ public class ProbEnergiaDemo {
                         displayCustomersServed(final_board);
                         printActionsCount(agent.getActions());
                         printInstrumentation(agent.getInstrumentation());
+                        displayClentralsUsed(final_board);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -73,6 +74,8 @@ public class ProbEnergiaDemo {
             System.out.println("temps = " + format4R(times) + ",");
         }
     }
+
+
 
     private static String format4R(List l) {
         StringBuilder builder = new StringBuilder();
@@ -141,6 +144,14 @@ public class ProbEnergiaDemo {
         System.out.println("Customers served: " + customers_served + "/" + n);
         System.out.println("      guaranteed: " + guaranteed_served + "/" + total_guaranteed);
         return  customers_served;
+    }
+
+    private static void displayClentralsUsed(ProbEnergiaBoard final_board) {
+        System.out.println("Stations served");
+        ArrayList stations = final_board.getNAssignedStationsByType();
+        System.out.println("         Type A: " + stations.get(0));
+        System.out.println("         Type B: " + stations.get(1));
+        System.out.println("         Type C: " + stations.get(2));
     }
 
     private static void printInstrumentation(Properties properties) {

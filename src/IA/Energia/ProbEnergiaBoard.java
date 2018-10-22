@@ -1,6 +1,7 @@
 package IA.Energia;
 
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 // Represents a problem of matching customers to power stations
@@ -282,5 +283,32 @@ public class ProbEnergiaBoard {
                 "\n\tstationRemainingProduction=" + Arrays.toString(stationRemainingProduction) +
                 "\n\thBenefit=" + hBenefit +
                 '}';
+    }
+
+    public ArrayList getNAssignedStationsByType() {
+        int TypeA = 0;
+        int TypeB = 0;
+        int TypeC = 0;
+        boolean[] visitats = new boolean[getNStations()];
+        for (int i = 0; i < getNCustomers(); ++i) {
+            if (customer2station[i] != UNALLOCATED) {
+                if (!(visitats[customer2station[i]])) {
+                    visitats[customer2station[i]] = true;
+                    int type = getStation(customer2station[i]).getTipo();
+                    if (type == 0) {
+                        ++TypeA;
+                    } else if (type == 1) {
+                        ++TypeB;
+                    } else if (type == 2) {
+                        ++TypeC;
+                    }
+                }
+            }
+        }
+        ArrayList NAssigned = new ArrayList<>();
+        NAssigned.add(TypeA);
+        NAssigned.add(TypeB);
+        NAssigned.add(TypeC);
+        return NAssigned;
     }
 }
