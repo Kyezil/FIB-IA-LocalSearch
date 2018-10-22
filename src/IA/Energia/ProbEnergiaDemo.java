@@ -27,7 +27,7 @@ public class ProbEnergiaDemo {
         ProbEnergiaBoard problem = PEgen.getProblem();
         System.out.println(problem.toString());
         displayCustomersServed(problem);
-        //EnergiaHillClimbingSearch(problem);
+        EnergiaHillClimbingSearch(problem);
         EnergiaSimulatedAnnealingSearch(problem);
     }
 

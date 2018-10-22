@@ -173,7 +173,7 @@ public class ProbEnergiaBoard {
         return stationRemainingProduction[s_id] + consumerConsumptionInStation(c_id2, s_id) - consumerConsumptionInStation(c_id1, s_id) >= 0;
     }
 
-    //col·loca el c_id1, que no estava allocated, a la central del c_id2, i desallocata el c_id2
+    //col.loca el c_id1, que no estava allocated, a la central del c_id2, i desallocata el c_id2
     public void replaceCustomer(int c_id1, int c_id2) throws Exception {
         int s_id = customer2station[c_id2];
         deallocateCustomer(c_id2);

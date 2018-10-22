@@ -152,7 +152,7 @@ class ProbEnergiaBoardGenerator {
         }
     }
 
-    //igual que greedyMaxCapacityInitState però assignant a tots els clients, no nomes els garantits.   
+    //igual que greedyMaxCapacityInitState pero assignant a tots els clients, no nomes els garantits.   
     public void unguaranteedGreedyMaxCapacityInitState(double max_c) throws Exception {
         int nc = problem.getNCustomers();
         int ns = problem.getNStations();
