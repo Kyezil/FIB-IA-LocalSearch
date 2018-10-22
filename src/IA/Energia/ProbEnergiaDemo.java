@@ -27,11 +27,12 @@ public class ProbEnergiaDemo {
             times.clear();
             for (int i = 0; i < reps; ++i) {
             System.out.println(i + 1 + "/" + reps);
-                System.out.println("Clientes " + 100 * (i + 1));
+                int clientes = 100 * (i+1);
+                System.out.println("Clientes " + clientes);
                 ProbEnergiaBoardGenerator PEgen = new ProbEnergiaBoardGenerator();
                 try {
-                    PEgen.setStations(new int[]{5, 10, 25}, RANDOM_SEED);
-                    PEgen.setCustomers(100 * (i + 1), new double[]{0.25, 0.3, 0.45}, 0.75, RANDOM_SEED);
+                    PEgen.setStations(new int[]{5, 10, 25}, RANDOM_SEED+i);
+                    PEgen.setCustomers(clientes, new double[]{0.25, 0.3, 0.45}, 0.75, RANDOM_SEED+i);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
