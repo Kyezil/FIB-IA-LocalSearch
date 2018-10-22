@@ -19,14 +19,16 @@ public class ProbEnergiaDemo {
     }
 
     private static void studyTimeCostBySize() throws Exception {
-        int reps = 1;
+        int reps = 15;
 
         List times = new ArrayList();
+        List benefici = new ArrayList();
+        List stations = new ArrayList();
 
-        for (int j = 0; j < 3; ++j) { // reps externes
+        for (int j = 0; j < 1; ++j) { // reps externes
             times.clear();
             for (int i = 1; i <= reps; ++i) { // reps internes
-            System.out.println(i + "/" + reps);
+            //System.out.println(i + "/" + reps);
                 int tipusC = i*5;
                 ProbEnergiaBoardGenerator PEgen = new ProbEnergiaBoardGenerator();
                 try {
@@ -55,16 +57,19 @@ public class ProbEnergiaDemo {
                     ProbEnergiaBoard final_board = (ProbEnergiaBoard) search.getGoalState();
 
                     times.add(dtime);
+                    stations.add(final_board.getNAssignedStationsByType());
+                    benefici.add(final_board.getBenefit());
+
                     if (i == 1) {
-                        System.out.println("### ACTIONS ###");
+                        //System.out.println("### ACTIONS ###");
                         //printActions(agent.getActions());
-                        System.out.println("### FINAL STATE ###");
-                        System.out.println(final_board);
+                        //System.out.println("### FINAL STATE ###");
+                        //System.out.println(final_board);
                         System.out.println("### EXPERIMENT INFO ###");
                         System.out.println("benefici: " + final_board.getBenefit());
                         displayCustomersServed(final_board);
-                        printActionsCount(agent.getActions());
-                        printInstrumentation(agent.getInstrumentation());
+                        //printActionsCount(agent.getActions());
+                        //printInstrumentation(agent.getInstrumentation());
                         displayClentralsUsed(final_board);
                     }
                 } catch (Exception e) {
@@ -72,6 +77,8 @@ public class ProbEnergiaDemo {
                 }
             }
             System.out.println("temps = " + format4R(times) + ",");
+            System.out.println("benefici = " + format4R(benefici) + ",");
+            System.out.println("stations = " + format4R(stations) + ",");
         }
     }
 
