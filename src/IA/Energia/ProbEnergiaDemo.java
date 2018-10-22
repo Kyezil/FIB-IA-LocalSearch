@@ -19,69 +19,54 @@ public class ProbEnergiaDemo {
     }
 
     private static void studyInitSolution() throws Exception {
-        List times = new ArrayList();
-        List benefici = new ArrayList();
-        List cserved = new ArrayList();
-        for (int i = 0; i < 50; ++i) {
-            ProbEnergiaBoardGenerator PEgen = new ProbEnergiaBoardGenerator();
+        int reps = 10;
 
+        List times = new ArrayList();
+        List beneficis = new ArrayList();
+        List customers = new ArrayList();
+        List nodes = new ArrayList();
+
+        for (int i = 0; i < reps; ++i) {
+            System.out.println(i + 1 + "/" + reps);
+            ProbEnergiaBoardGenerator PEgen = new ProbEnergiaBoardGenerator();
             try {
                 PEgen.setStations(new int[]{5, 10, 25}, RANDOM_SEED);
                 PEgen.setCustomers(1000, new double[]{0.25, 0.3, 0.45}, 0.75, RANDOM_SEED);
-            } catch(Exception e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
-            Instant before = Instant.now();
-            //PEgen.randomInitState(RANDOM_SEED+i);
-            //PEgen.randomMaxCapacityInitState(RANDOM_SEED+1, 0.90);
+            //PEgen.randomInitState(RANDOM_SEED + i);
+            PEgen.randomMaxCapacityInitState(RANDOM_SEED+1, 0.90);
             //PEgen.randomMaxCapacityInitState(RANDOM_SEED+1, 0.95);
             //PEgen.greedyInitState();
             //PEgen.greedyMaxCapacityInitState(0.90);
             //PEgen.greedyMaxCapacityInitState(0.95);
             //PEgen.closestInitState(RANDOM_SEED+i);
-            PEgen.realGreedyInitState();
-
-            Instant after = Instant.now();
-            long dtime = Duration.between(before, after).toMillis(); // .toWhatsoever()
-
-            ProbEnergiaBoard problem = PEgen.getProblem();
-
-            System.out.println("Sol. inicial");
-            System.out.println(problem);
-            System.out.println("benefici: " + problem.getBenefit());
-            int served = displayCustomersServed(problem);
-            times.add(dtime);
-            benefici.add(problem.getBenefit());
-            cserved.add(served);
-        }
-        System.out.println("Temps: " + times);
-        System.out.println("Benefici: "+ benefici);
-        System.out.println("Servits: "+ cserved);
-    }
-
-/*
-    private static void EnergiaHillClimbingSearch(ProbEnergiaBoard board) {
-        System.out.println("\nEnergia HillClimbing  -->");
-        try {
-            List times = new ArrayList();
-            int reps = 1;
-            for (int i = 0; i < reps; ++i) {
-                System.out.println(i+1 + "/" + reps);
+            //PEgen.realGreedyInitState();
+            ProbEnergiaBoard board = PEgen.getProblem();
+            try {
                 Problem problem = new Problem(board,
                         new ProbEnergiaSuccessorFunction(),
                         new ProbEnergiaGoalTest(),
-                        new ProbEnergiaHeuristicMix(0.9));
+                        new ProbEnergiaHeuristicMix(0.45));
                 Search search = new HillClimbingSearch();
                 // timer
-                long time_0 = System.currentTimeMillis();
+
+                Instant before = Instant.now();
                 SearchAgent agent = new SearchAgent(problem, search);
-                long dtime = System.currentTimeMillis() - time_0;
+                Instant after = Instant.now();
+                long dtime = Duration.between(before, after).toMillis(); // .toWhatsoever()
+
+                ProbEnergiaBoard final_board = (ProbEnergiaBoard) search.getGoalState();
+
                 times.add(dtime);
+                beneficis.add(final_board.getBenefit());
+                customers.add(final_board.getNCustomersAllocated());
+                nodes.add(agent.getInstrumentation().getProperty("nodesExpanded"));
                 if (i == 0) {
                     System.out.println("### ACTIONS ###");
                     //printActions(agent.getActions());
                     System.out.println("### FINAL STATE ###");
-                    ProbEnergiaBoard final_board = (ProbEnergiaBoard) search.getGoalState();
                     System.out.println(final_board);
                     System.out.println("### EXPERIMENT INFO ###");
                     System.out.println("benefici: " + final_board.getBenefit());
@@ -89,12 +74,14 @@ public class ProbEnergiaDemo {
                     printActionsCount(agent.getActions());
                     printInstrumentation(agent.getInstrumentation());
                 }
+            } catch(Exception e){
+                e.printStackTrace();
             }
-            System.out.println("Times elapsed (ms): " + times);
-
-        } catch (Exception e) {
-            e.printStackTrace();
         }
+        System.out.println("temps = " + format4R(times) + ",");
+        System.out.println("beneficis = " + format4R(beneficis) + ",");
+        System.out.println("nodes = " + format4R(nodes) + ",");
+        System.out.println("customers = " + format4R(customers));
     }
 
     private static String format4R(List l) {
