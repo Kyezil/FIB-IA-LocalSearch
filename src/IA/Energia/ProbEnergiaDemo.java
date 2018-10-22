@@ -97,6 +97,19 @@ public class ProbEnergiaDemo {
         }
     }
 
+    private static String format4R(List l) {
+        StringBuilder builder = new StringBuilder();
+        builder.append("c(");
+        for (int i = 0; i < l.size(); ++i) {
+            if (i != 0) {
+                builder.append(", ");
+            }
+            builder.append(l.get(i));
+        }
+        builder.append(')');
+        return builder.toString();
+    }
+/*
     private static void EnergiaSimulatedAnnealingSearch(ProbEnergiaBoard board) {
         System.out.println("\nSimulated Annealing  -->");
         try {
