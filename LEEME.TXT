@@ -1,0 +1,1 @@
+java -jar out/artifacts/FIB_IA_Localsearch_jar/FIB-IA-Localsearch.jar
